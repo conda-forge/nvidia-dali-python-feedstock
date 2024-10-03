@@ -16,7 +16,7 @@ source:
     folder: third_party/cocoapi
 
 build:
-  number: 1
+  number: 2
   skip: true  # [not linux64 or cuda_compiler_version == "None"]
 
 requirements:
