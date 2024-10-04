@@ -23,7 +23,7 @@ docker_image:
 libabseil:
 - '20240116'
 libboost_devel:
-- '1.84'
+- '1.86'
 libjpeg_turbo:
 - '3'
 libopencv:
