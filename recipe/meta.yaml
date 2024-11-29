@@ -1,4 +1,4 @@
-{% set version = "1.42.0" %}
+{% set version = "1.43.0" %}
 
 package:
   name: nvidia-dali-python
@@ -6,7 +6,7 @@ package:
 
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v{{ version }}.tar.gz
-    sha256: aa257dea7cbc3fff11876d7e561bf121c5da54b66ec22d2fb16ef3596b82dd51
+    sha256: 05126829561174a227266bfed866351ea60d6a16e7b144c2e72a6e71cc6d340d
     patches:
       - use_shared_deps.diff
       - fix_nvimgcodec.diff
@@ -16,7 +16,7 @@ source:
     folder: third_party/cocoapi
 
 build:
-  number: 4
+  number: 0
   skip: true  # [not linux64 or cuda_compiler_version == "None"]
 
 requirements:
