@@ -44,7 +44,7 @@ requirements:
     - libjpeg-turbo
     - libtiff
     - python-clang
-    - libboost-devel
+    - libboost-headers
     - protobuf
     - libprotobuf
     - dlpack
