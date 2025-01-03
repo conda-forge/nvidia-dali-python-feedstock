@@ -76,7 +76,6 @@ requirements:
     - libnpp        # [(cuda_compiler_version or "").startswith("12")]
     - cuda-cudart   # [(cuda_compiler_version or "").startswith("12")]
     - libnvjpeg     # [(cuda_compiler_version or "").startswith("12")]
-    - libcurand     # [(cuda_compiler_version or "").startswith("12")]
 
 test:
   imports:
