@@ -21,7 +21,6 @@ build:
   ignore_run_exports_from:
     - {{ compiler('cuda') }}
     - cudatoolkit       # [(cuda_compiler_version or "").startswith("11")]
-    - cuda-nvtx-dev     # [(cuda_compiler_version or "").startswith("12")]
     - libcufft-dev      # [(cuda_compiler_version or "").startswith("12")]
     - libnpp-dev        # [(cuda_compiler_version or "").startswith("12")]
     - cuda-cudart-dev   # [(cuda_compiler_version or "").startswith("12")]
@@ -54,7 +53,6 @@ requirements:
     - libabseil
     - cuda-version {{ cuda_compiler_version }}
     - cudatoolkit       # [(cuda_compiler_version or "").startswith("11")]
-    - cuda-nvtx-dev     # [(cuda_compiler_version or "").startswith("12")]
     - libcufft-dev      # [(cuda_compiler_version or "").startswith("12")]
     - libnpp-dev        # [(cuda_compiler_version or "").startswith("12")]
     - cuda-cudart-dev   # [(cuda_compiler_version or "").startswith("12")]
@@ -71,7 +69,6 @@ requirements:
     - packaging <=24.2
     - {{ pin_compatible('cuda-version', min_pin='x', max_pin='x') }}
     - cudatoolkit   # [(cuda_compiler_version or "").startswith("11")]
-    - cuda-nvtx     # [(cuda_compiler_version or "").startswith("12")]
     - libcufft      # [(cuda_compiler_version or "").startswith("12")]
     - libnpp        # [(cuda_compiler_version or "").startswith("12")]
     - cuda-cudart   # [(cuda_compiler_version or "").startswith("12")]
