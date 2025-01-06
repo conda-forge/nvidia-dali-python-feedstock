@@ -82,6 +82,9 @@ test:
     - nvidia.dali
   commands:
     - pip check
+    - rec2idx --help
+    - tfrecord2idx --help
+    - wds2idx --help
   requires:
     - pip
 
