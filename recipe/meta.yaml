@@ -33,7 +33,7 @@ requirements:
     - {{ compiler('cuda') }}
     - {{ stdlib('c') }}
     - cmake
-    - make
+    - ninja
   host:
     - python
     - pip

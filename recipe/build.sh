@@ -18,6 +18,7 @@ mkdir -p build
 cd build
 
 cmake ${CMAKE_ARGS} \
+  -GNinja \
   -DBUILD_PYTHON=ON \
   -DBUILD_FFTS=OFF \
   -DBUILD_CVCUDA=OFF \
@@ -39,10 +40,11 @@ cmake ${CMAKE_ARGS} \
   -DWITH_DYNAMIC_NVJPEG=ON \
   -DBUILD_NVML=OFF \
   -DBUILD_NVTX=OFF \
+  -DPYTHON_VERSIONS=${PY_VER} \
   ..
 
-make -j${CPU_COUNT}
-make install
+cmake --build .
+cmake --install . --strip -v
 
 cd dali/python
 ${PYTHON} -m pip install .
