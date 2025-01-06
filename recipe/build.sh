@@ -48,3 +48,5 @@ cmake --install . --strip -v
 
 cd dali/python
 ${PYTHON} -m pip install .
+
+rm ${SP_DIR}/nvidia/dali/include/boost -rf
