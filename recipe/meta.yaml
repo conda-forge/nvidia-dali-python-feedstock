@@ -1,4 +1,4 @@
-{% set version = "1.43.0" %}
+{% set version = "1.44.0" %}
 
 package:
   name: nvidia-dali-python
@@ -6,7 +6,7 @@ package:
 
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v{{ version }}.tar.gz
-    sha256: 05126829561174a227266bfed866351ea60d6a16e7b144c2e72a6e71cc6d340d
+    sha256: f6ad0d91f0eaf52a8e556124edae0e73774d77b304ac339c7ecd684267e0a0dc
     patches:
       - use_shared_deps.diff
       - fix_nvimgcodec.diff
@@ -18,6 +18,14 @@ source:
 build:
   number: 0
   skip: true  # [not linux64 or cuda_compiler_version == "None"]
+  ignore_run_exports_from:
+    - {{ compiler('cuda') }}
+    - cudatoolkit       # [(cuda_compiler_version or "").startswith("11")]
+    - libcufft-dev      # [(cuda_compiler_version or "").startswith("12")]
+    - libnpp-dev        # [(cuda_compiler_version or "").startswith("12")]
+    - cuda-cudart-dev   # [(cuda_compiler_version or "").startswith("12")]
+    - libnvjpeg-dev     # [(cuda_compiler_version or "").startswith("12")]
+    - libcurand-dev     # [(cuda_compiler_version or "").startswith("12")]
 
 requirements:
   build:
@@ -25,7 +33,7 @@ requirements:
     - {{ compiler('cuda') }}
     - {{ stdlib('c') }}
     - cmake
-    - make
+    - ninja
   host:
     - python
     - pip
@@ -35,7 +43,7 @@ requirements:
     - libjpeg-turbo
     - libtiff
     - python-clang
-    - libboost-devel
+    - libboost-headers
     - protobuf
     - libprotobuf
     - dlpack
@@ -43,18 +51,28 @@ requirements:
     - libopencv
     - cutlass
     - libabseil
-    - cuda-nvtx-dev     # [(cuda_compiler_version or "").startswith("12")]
+    - cuda-version {{ cuda_compiler_version }}
+    - cudatoolkit       # [(cuda_compiler_version or "").startswith("11")]
     - libcufft-dev      # [(cuda_compiler_version or "").startswith("12")]
     - libnpp-dev        # [(cuda_compiler_version or "").startswith("12")]
-    - cuda-cudart-dev 12.0.*   # [(cuda_compiler_version or "").startswith("12")]
+    - cuda-cudart-dev   # [(cuda_compiler_version or "").startswith("12")]
     - libnvjpeg-dev     # [(cuda_compiler_version or "").startswith("12")]
     - libcurand-dev     # [(cuda_compiler_version or "").startswith("12")]
     - cuda-nvml-dev     # [(cuda_compiler_version or "").startswith("12")]
   run:
     - python
-    - astunparse >=1.6.0
-    - gast >=0.3.3
-    - dm-tree
+    # https://github.com/NVIDIA/DALI/blob/main/dali/python/setup.py.in
+    - astunparse >=1.6.0,<=1.6.3
+    - gast >=0.3.3,<=0.6.0
+    - six >=1.16,<=1.16
+    - dm-tree <=0.1.8
+    - packaging <=24.2
+    - {{ pin_compatible('cuda-version', min_pin='x', max_pin='x') }}
+    - cudatoolkit   # [(cuda_compiler_version or "").startswith("11")]
+    - libcufft      # [(cuda_compiler_version or "").startswith("12")]
+    - libnpp        # [(cuda_compiler_version or "").startswith("12")]
+    - cuda-cudart   # [(cuda_compiler_version or "").startswith("12")]
+    - libnvjpeg     # [(cuda_compiler_version or "").startswith("12")]
 
 test:
   imports:
