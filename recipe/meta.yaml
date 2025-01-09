@@ -82,7 +82,8 @@ test:
     - nvidia.dali
   commands:
     - pip check
-    - rec2idx --help
+    # rec2idx requires mxnet which is not available on the channel as of 2025.1.9
+    # - rec2idx --help
     - tfrecord2idx --help
     - wds2idx --help
   requires:
