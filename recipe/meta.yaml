@@ -16,7 +16,8 @@ source:
     folder: third_party/cocoapi
 
 build:
-  number: 0
+  number: 1
+  # skip: true  # [py!=312]
   skip: true  # [not linux64 or cuda_compiler_version == "None"]
   ignore_run_exports_from:
     - {{ compiler('cuda') }}
@@ -73,12 +74,18 @@ requirements:
     - libnpp        # [(cuda_compiler_version or "").startswith("12")]
     - cuda-cudart   # [(cuda_compiler_version or "").startswith("12")]
     - libnvjpeg     # [(cuda_compiler_version or "").startswith("12")]
-
+  run_constrained:
+    # https://github.com/NVIDIA/DALI/tree/v1.44.0/third_party
+    - libboost-headers 1.85
 test:
   imports:
     - nvidia.dali
   commands:
     - pip check
+    # rec2idx requires mxnet which is not available on the channel as of 2025.1.9
+    # - rec2idx --help
+    - tfrecord2idx --help
+    - wds2idx --help
   requires:
     - pip
 
