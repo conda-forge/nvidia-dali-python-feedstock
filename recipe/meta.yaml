@@ -60,6 +60,12 @@ requirements:
     - libnvjpeg-dev     # [(cuda_compiler_version or "").startswith("12")]
     - libcurand-dev     # [(cuda_compiler_version or "").startswith("12")]
     - cuda-nvml-dev     # [(cuda_compiler_version or "").startswith("12")]
+    # Runtime deps from below, for stub generator
+    - astunparse >=1.6.0,<=1.6.3
+    - gast >=0.3.3,<=0.6.0
+    - six >=1.16,<=1.16
+    - dm-tree <=0.1.8
+    - packaging <=24.2
   run:
     - python
     # https://github.com/NVIDIA/DALI/blob/main/dali/python/setup.py.in
