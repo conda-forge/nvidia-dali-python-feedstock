@@ -27,7 +27,7 @@ libboost_headers:
 libjpeg_turbo:
 - '3'
 libopencv:
-- 4.10.0
+- 4.11.0
 libprotobuf:
 - 5.28.3
 libtiff:
