@@ -1,4 +1,4 @@
-{% set version = "1.45.0" %}
+{% set version = "1.46.0" %}
 
 package:
   name: nvidia-dali-python
@@ -6,7 +6,7 @@ package:
 
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v{{ version }}.tar.gz
-    sha256: 6ca1616d06ff19731ec2716ac1594369f10a507a5c9abd2ce9d585caab234bd3
+    sha256: 68ad7a6aed60243056e270bbdf611e5db163d3e735f260b7d2f481d571d3e9e6
     patches:
       - use_shared_deps.diff
       - fix_nvimgcodec.diff
