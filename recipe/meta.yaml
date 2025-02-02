@@ -66,6 +66,8 @@ requirements:
     - six >=1.16,<=1.16
     - dm-tree <=0.1.8
     - packaging <=24.2
+    # Stubs autoformat themselves
+    - black
   run:
     - python
     # https://github.com/NVIDIA/DALI/blob/main/dali/python/setup.py.in
