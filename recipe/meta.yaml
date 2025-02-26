@@ -64,17 +64,18 @@ requirements:
     - astunparse >=1.6.0,<=1.6.3
     - gast >=0.3.3,<=0.6.0
     - six >=1.16,<=1.16
-    - dm-tree <=0.1.8
+    - dm-tree <=0.1.9
     - packaging <=24.2
     # Stubs autoformat themselves
-    - black
+    # https://github.com/NVIDIA/DALI/blob/v1.47.0/pyproject.toml
+    - black 24
   run:
     - python
     # https://github.com/NVIDIA/DALI/blob/main/dali/python/setup.py.in
     - astunparse >=1.6.0,<=1.6.3
     - gast >=0.3.3,<=0.6.0
     - six >=1.16,<=1.16
-    - dm-tree <=0.1.8
+    - dm-tree <=0.1.9
     - packaging <=24.2
     - {{ pin_compatible('cuda-version', min_pin='x', max_pin='x') }}
     - cudatoolkit   # [(cuda_compiler_version or "").startswith("11")]
@@ -83,8 +84,8 @@ requirements:
     - cuda-cudart   # [(cuda_compiler_version or "").startswith("12")]
     - libnvjpeg     # [(cuda_compiler_version or "").startswith("12")]
   run_constrained:
-    # https://github.com/NVIDIA/DALI/tree/v1.44.0/third_party
-    - libboost-headers 1.85
+    # https://github.com/NVIDIA/DALI/tree/v1.47.0/third_party
+    - libboost-headers 1.87
 test:
   imports:
     - nvidia.dali
