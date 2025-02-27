@@ -1,0 +1,13 @@
+# https://github.com/NVIDIA/DALI/blob/main/cmake/Dependencies.common.cmake#L279
+libnvjpeg2k: ">=0.8.0,<0.9.0"
+libnvtiff: ">=0.4.0,<0.5.0"
+# https://github.com/NVIDIA/DALI/tree/main/third_party
+libboost_headers: "1.87"
+# https://github.com/NVIDIA/DALI/blob/main/dali/python/setup.py.in
+astunparse: ">=1.6.0,<=1.6.3"
+gast:  ">=0.3.3,<=0.6.0"
+six: ">=1.16,<=1.16"
+dm_tree: "<=0.1.9"
+packaging: "<=24.2"
+# https://github.com/NVIDIA/DALI/blob/v1.47.0/pyproject.toml
+black: "24"

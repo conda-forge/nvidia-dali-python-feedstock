@@ -1,4 +1,5 @@
-{% set version = "1.45.0" %}
+# TODO: Update package pinnings in conda_build_config for every release
+{% set version = "1.47.0" %}
 
 package:
   name: nvidia-dali-python
@@ -6,7 +7,7 @@ package:
 
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v{{ version }}.tar.gz
-    sha256: 6ca1616d06ff19731ec2716ac1594369f10a507a5c9abd2ce9d585caab234bd3
+    sha256: 716971c827b04a537e8692c1c1f7e660ad5b05fac6b221b26171ffafaeb195de
     patches:
       - use_shared_deps.diff
       - fix_nvimgcodec.diff
@@ -61,21 +62,20 @@ requirements:
     - libcurand-dev     # [(cuda_compiler_version or "").startswith("12")]
     - cuda-nvml-dev     # [(cuda_compiler_version or "").startswith("12")]
     # Runtime deps from below, for stub generator
-    - astunparse >=1.6.0,<=1.6.3
-    - gast >=0.3.3,<=0.6.0
-    - six >=1.16,<=1.16
-    - dm-tree <=0.1.8
-    - packaging <=24.2
+    - astunparse {{ astunparse }}
+    - gast {{ gast }}
+    - six {{ six }}
+    - dm-tree {{ dm_tree }}
+    - packaging {{ packaging }}
     # Stubs autoformat themselves
-    - black
+    - black  {{ black }}
   run:
     - python
-    # https://github.com/NVIDIA/DALI/blob/main/dali/python/setup.py.in
-    - astunparse >=1.6.0,<=1.6.3
-    - gast >=0.3.3,<=0.6.0
-    - six >=1.16,<=1.16
-    - dm-tree <=0.1.8
-    - packaging <=24.2
+    - astunparse {{ astunparse }}
+    - gast {{ gast }}
+    - six {{ six }}
+    - dm-tree {{ dm_tree }}
+    - packaging {{ packaging }}
     - {{ pin_compatible('cuda-version', min_pin='x', max_pin='x') }}
     - cudatoolkit   # [(cuda_compiler_version or "").startswith("11")]
     - libcufft      # [(cuda_compiler_version or "").startswith("12")]
@@ -83,8 +83,7 @@ requirements:
     - cuda-cudart   # [(cuda_compiler_version or "").startswith("12")]
     - libnvjpeg     # [(cuda_compiler_version or "").startswith("12")]
   run_constrained:
-    # https://github.com/NVIDIA/DALI/tree/v1.44.0/third_party
-    - libboost-headers 1.85
+    - libboost-headers  {{ libboost_headers }}
 test:
   imports:
     - nvidia.dali
