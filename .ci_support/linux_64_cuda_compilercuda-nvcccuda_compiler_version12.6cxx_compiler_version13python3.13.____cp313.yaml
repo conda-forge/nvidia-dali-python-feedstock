@@ -29,7 +29,7 @@ docker_image:
 gast:
 - '>=0.3.3,<=0.6.0'
 libabseil:
-- '20240722'
+- '20250127'
 libboost_headers:
 - '1.87'
 libjpeg_turbo:
@@ -37,7 +37,7 @@ libjpeg_turbo:
 libopencv:
 - 4.11.0
 libprotobuf:
-- 5.28.3
+- 5.29.3
 libtiff:
 - '4.7'
 packaging:
