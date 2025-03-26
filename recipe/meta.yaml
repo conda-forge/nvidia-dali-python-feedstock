@@ -1,5 +1,5 @@
 # TODO: Update package pinnings in conda_build_config for every release
-{% set version = "1.47.0" %}
+{% set version = "1.48.0" %}
 
 package:
   name: nvidia-dali-python
@@ -7,7 +7,7 @@ package:
 
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v{{ version }}.tar.gz
-    sha256: 716971c827b04a537e8692c1c1f7e660ad5b05fac6b221b26171ffafaeb195de
+    sha256: 2cf4a1855974e90c88490a2a6a68e707e143c8a62110cf67b99397527eb33458
     patches:
       - use_shared_deps.diff
       - fix_nvimgcodec.diff
@@ -17,7 +17,7 @@ source:
     folder: third_party/cocoapi
 
 build:
-  number: 2
+  number: 0
   # skip: true  # [py!=312]
   skip: true  # [not linux64 or cuda_compiler_version == "None"]
   ignore_run_exports_from:
