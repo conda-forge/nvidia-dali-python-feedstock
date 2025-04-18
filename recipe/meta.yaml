@@ -53,7 +53,7 @@ requirements:
     - libabseil
     - libboost-headers  {{ libboost_headers }}
     - libcufft-dev      # [(cuda_compiler_version or "").startswith("12")]
-    - libcufile-dev     # [(cuda_compiler_version or "").startswith("12")]
+    # - libcufile-dev     # [(cuda_compiler_version or "").startswith("12")]
     - libcurand-dev     # [(cuda_compiler_version or "").startswith("12")]
     - libjpeg-turbo
     - libnpp-dev        # [(cuda_compiler_version or "").startswith("12")]
@@ -88,7 +88,7 @@ requirements:
     - cuda-cudart   # [(cuda_compiler_version or "").startswith("12")]
     - cudatoolkit   # [(cuda_compiler_version or "").startswith("11")]
     - libcufft      # [(cuda_compiler_version or "").startswith("12")]
-    - libcufile     # [(cuda_compiler_version or "").startswith("12")]
+    # - libcufile     # [(cuda_compiler_version or "").startswith("12")]
     - libnpp        # [(cuda_compiler_version or "").startswith("12")]
     - libnvjpeg     # [(cuda_compiler_version or "").startswith("12")]
   run_constrained:
