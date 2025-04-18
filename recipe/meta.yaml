@@ -20,7 +20,7 @@ source:
 build:
   number: 1
   # skip: true  # [py!=312]
-  skip: true  # [not linux64 or cuda_compiler_version == "None"]
+  skip: true  # [(cuda_compiler_version or "None") == "None"]
   ignore_run_exports:
     - cuda-version
   ignore_run_exports_from:

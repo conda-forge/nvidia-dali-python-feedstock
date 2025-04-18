@@ -40,6 +40,8 @@ libprotobuf:
 - 5.29.3
 libtiff:
 - '4.7'
+nvimgcodec:
+- 0.5.*
 packaging:
 - <=24.2
 pin_run_as_build:
