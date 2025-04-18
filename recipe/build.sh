@@ -32,6 +32,7 @@ DALI_LINKING_ARGS=(
   -DSTATIC_LIBS=OFF
 )
 
+# FIXME: CMake uses wrong prefix for cufile.h
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
 cmake ${CMAKE_ARGS} \
   -GNinja \
@@ -39,7 +40,7 @@ cmake ${CMAKE_ARGS} \
   -DPYTHON_VERSIONS=${PY_VER} \
   -DBUILD_BENCHMARK=OFF \
   -DBUILD_CFITSIO=ON \
-  -DBUILD_CUFILE=OFF \  # FIXME: CMake uses wrong prefix for cufile.h
+  -DBUILD_CUFILE=OFF \
   -DBUILD_CVCUDA=OFF \
   -DBUILD_FFMPEG=OFF \
   -DBUILD_FFTS=OFF \
