@@ -1,0 +1,37 @@
+From 339a04a3f0d053dba1fc48db61edef237a90f8e1 Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Fri, 18 Apr 2025 18:07:15 -0500
+Subject: [PATCH 2/3] BLD: Find nvimgcodec package instead of downloading
+ source
+
+---
+ cmake/Dependencies.common.cmake | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
+
+diff --git a/cmake/Dependencies.common.cmake b/cmake/Dependencies.common.cmake
+index 9f4a404c..4448bf03 100644
+--- a/cmake/Dependencies.common.cmake
++++ b/cmake/Dependencies.common.cmake
+@@ -293,18 +293,7 @@ if(BUILD_NVIMAGECODEC)
+     endif()
+ 
+     # Note: We are getting the x86_64 tarball, but we are only interested in the headers.
+-    include(FetchContent)
+-    FetchContent_Declare(
+-      nvimgcodec_headers
+-      URL      https://developer.download.nvidia.com/compute/nvimgcodec/redist/nvimgcodec/linux-x86_64/nvimgcodec-linux-x86_64-0.4.1.21-archive.tar.xz
+-      URL_HASH SHA512=3f20f6944a360597586bfe3550a0605257bcd944748477a869691ec1a42716e3722f8ddbd0b525995ebab89a33cd91ed82d5b151194008f1a8424971448a4824
+-    )
+-    FetchContent_Populate(nvimgcodec_headers)
+-    set(nvimgcodec_SEARCH_PATH "${nvimgcodec_headers_SOURCE_DIR}/${CUDA_VERSION_MAJOR}/include")
+-    find_path(nvimgcodec_INCLUDE_DIR nvimgcodec.h PATHS "${nvimgcodec_SEARCH_PATH}")
+-    if (${nvimgcodec_INCLUDE_DIR} STREQUAL "nvimgcodec_INCLUDE_DIR-NOTFOUND")
+-      message(FATAL_ERROR "nvimgcodec not found in ${nvimgcodec_SEARCH_PATH} - something went wrong with the download")
+-    endif()
++    find_package(nvimgcodec ${NVIMGCODEC_MIN_VERSION}...<${NVIMGCODEC_MAX_VERSION} REQUIRED)
+     message(STATUS "Using nvimgcodec_INCLUDE_DIR=${nvimgcodec_INCLUDE_DIR}")
+     include_directories(SYSTEM ${nvimgcodec_INCLUDE_DIR})
+ 
+-- 
+2.34.1
+

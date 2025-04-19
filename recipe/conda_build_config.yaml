@@ -11,3 +11,4 @@ dm_tree: "<=0.1.9"
 packaging: "<=24.2"
 # https://github.com/NVIDIA/DALI/blob/v1.47.0/pyproject.toml
 black: "24"
+nvimgcodec: "0.5.*"

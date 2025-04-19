@@ -1,0 +1,154 @@
+From 3ddc6337ab3f33944c61a208fdac3ce916293cdf Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Fri, 18 Apr 2025 10:57:08 -0500
+Subject: [PATCH 1/3] BLD: Use shared library deps
+
+---
+ cmake/Dependencies.aarch64-linux.cmake | 22 +++++-----------------
+ cmake/Dependencies.cmake               | 19 ++++++-------------
+ cmake/Dependencies.common.cmake        |  1 -
+ cmake/modules/FindNVJPEG.cmake         |  4 ++--
+ 4 files changed, 13 insertions(+), 33 deletions(-)
+
+diff --git a/cmake/Dependencies.aarch64-linux.cmake b/cmake/Dependencies.aarch64-linux.cmake
+index f93e1c07..ac010892 100644
+--- a/cmake/Dependencies.aarch64-linux.cmake
++++ b/cmake/Dependencies.aarch64-linux.cmake
+@@ -25,33 +25,21 @@ set(CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES "${CUDA_TARGET}/include")
+ 
+ list(APPEND DALI_LIBS ${CUDA_LIBRARIES})
+ 
+-CUDA_find_library(CUDART_LIB cudart_static)
+-list(APPEND DALI_EXCLUDES libcudart_static.a)
++CUDA_find_library(CUDART_LIB cudart)
+ 
+ # NVIDIA NPPC library
+ if (NOT WITH_DYNAMIC_NPP)
+-  CUDA_find_library(CUDA_nppicc_LIBRARY nppicc_static)
+-  CUDA_find_library(CUDA_nppig_LIBRARY nppig_static)
+-  CUDA_find_library(CUDA_nppc_LIBRARY nppc_static)
++  CUDA_find_library(CUDA_nppicc_LIBRARY nppicc)
++  CUDA_find_library(CUDA_nppig_LIBRARY nppig)
++  CUDA_find_library(CUDA_nppc_LIBRARY nppc)
+   list(APPEND DALI_LIBS ${CUDA_nppicc_LIBRARY})
+-  list(APPEND DALI_EXCLUDES libnppicc_static.a)
+   list(APPEND DALI_LIBS ${CUDA_nppig_LIBRARY})
+-  list(APPEND DALI_EXCLUDES libnppig_static.a)
+   list(APPEND DALI_LIBS ${CUDA_nppc_LIBRARY})
+-  list(APPEND DALI_EXCLUDES libnppc_static.a)
+ endif ()
+ 
+ # cuFFT library
+ if (NOT WITH_DYNAMIC_CUFFT)
+-  CUDA_find_library(CUDA_cufft_LIBRARY cufft_static)
+-  list(APPEND DALI_EXCLUDES libcufft_static.a)
+-endif ()
+-
+-# CULIBOS needed when using static CUDA libs
+-if (NOT WITH_DYNAMIC_CUDA_TOOLKIT)
+-  CUDA_find_library(CUDA_culibos_LIBRARY culibos)
+-  list(APPEND DALI_LIBS ${CUDA_culibos_LIBRARY})
+-  list(APPEND DALI_EXCLUDES libculibos.a)
++  CUDA_find_library(CUDA_cufft_LIBRARY cufft)
+ endif ()
+ 
+ # TODO(klecki): Do we need host includes?
+diff --git a/cmake/Dependencies.cmake b/cmake/Dependencies.cmake
+index 01f3d354..41d8c0e5 100644
+--- a/cmake/Dependencies.cmake
++++ b/cmake/Dependencies.cmake
+@@ -16,8 +16,7 @@
+ # CUDA Toolkit libraries (including NVJPEG)
+ ##################################################################
+ 
+-CUDA_find_library(CUDART_LIB cudart_static)
+-list(APPEND DALI_EXCLUDES libcudart_static.a)
++CUDA_find_library(CUDART_LIB cudart)
+ 
+ # For NVJPEG
+ if (BUILD_NVJPEG)
+@@ -31,7 +30,6 @@ if (BUILD_NVJPEG)
+   # load using dlopen or link statically here
+   if (NOT WITH_DYNAMIC_NVJPEG)
+     list(APPEND DALI_LIBS ${NVJPEG_LIBRARY})
+-    list(APPEND DALI_EXCLUDES libnvjpeg_static.a)
+   endif (NOT WITH_DYNAMIC_NVJPEG)
+ 
+   add_definitions(-DDALI_USE_NVJPEG)
+@@ -46,34 +44,29 @@ if (BUILD_NVJPEG)
+ endif()
+ 
+ if (BUILD_NVJPEG2K)
+-  CUDA_find_library(NVJPEG2K_LIBRARY nvjpeg2k_static)
++  find_library(NVJPEG2K_LIBRARY nvjpeg2k PATHS "$ENV{PREFIX}/lib" )
+   if (${NVJPEG2K_LIBRARY} STREQUAL "NVJPEG2K_LIBRARY-NOTFOUND")
+     message(WARNING "nvJPEG2k not found - disabled")
+     set(BUILD_NVJPEG2K OFF CACHE BOOL INTERNAL)
+     set(BUILD_NVJPEG2K OFF)
+   else()
+     list(APPEND DALI_LIBS ${NVJPEG2K_LIBRARY})
+-    list(APPEND DALI_EXCLUDES libnvjpeg2k_static.a)
+   endif()
+ endif ()
+ 
+ # NVIDIA NPP library
+ if (NOT WITH_DYNAMIC_NPP)
+-  CUDA_find_library(CUDA_nppicc_LIBRARY nppicc_static)
+-  CUDA_find_library(CUDA_nppig_LIBRARY nppig_static)
+-  CUDA_find_library(CUDA_nppc_LIBRARY nppc_static)
++  CUDA_find_library(CUDA_nppicc_LIBRARY nppicc)
++  CUDA_find_library(CUDA_nppig_LIBRARY nppig)
++  CUDA_find_library(CUDA_nppc_LIBRARY nppc)
+   list(APPEND DALI_LIBS ${CUDA_nppicc_LIBRARY})
+-  list(APPEND DALI_EXCLUDES libnppicc_static.a)
+   list(APPEND DALI_LIBS ${CUDA_nppig_LIBRARY})
+-  list(APPEND DALI_EXCLUDES libnppig_static.a)
+   list(APPEND DALI_LIBS ${CUDA_nppc_LIBRARY})
+-  list(APPEND DALI_EXCLUDES libnppc_static.a)
+ endif ()
+ 
+ # cuFFT library
+ if (NOT WITH_DYNAMIC_CUFFT)
+-  CUDA_find_library(CUDA_cufft_LIBRARY cufft_static)
+-  list(APPEND DALI_EXCLUDES libcufft_static.a)
++  CUDA_find_library(CUDA_cufft_LIBRARY cufft)
+ endif ()
+ 
+ # CULIBOS needed when using static CUDA libs
+diff --git a/cmake/Dependencies.common.cmake b/cmake/Dependencies.common.cmake
+index 69e23ef1..9f4a404c 100644
+--- a/cmake/Dependencies.common.cmake
++++ b/cmake/Dependencies.common.cmake
+@@ -83,7 +83,6 @@ endif()
+ ##################################################################
+ if (BUILD_PYTHON)
+   set(PYBIND11_CPP_STANDARD -std=c++14)
+-  check_and_add_cmake_submodule(${PROJECT_SOURCE_DIR}/third_party/pybind11)
+ endif()
+ 
+ ##################################################################
+diff --git a/cmake/modules/FindNVJPEG.cmake b/cmake/modules/FindNVJPEG.cmake
+index c139cccb..0ce82e37 100644
+--- a/cmake/modules/FindNVJPEG.cmake
++++ b/cmake/modules/FindNVJPEG.cmake
+@@ -16,7 +16,7 @@ find_path(NVJPEG_INCLUDE_DIR nvjpeg.h
+     PATHS ${NVJPEG_ROOT_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}
+     PATH_SUFFIXES include)
+ 
+-find_library(NVJPEG_LIBRARY libnvjpeg_static.a nvjpeg
++find_library(NVJPEG_LIBRARY libnvjpeg nvjpeg
+     PATHS ${NVJPEG_ROOT_DIR} ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES}
+     PATH_SUFFIXES lib lib64)
+ 
+@@ -44,7 +44,7 @@ if(NVJPEG_FOUND)
+     list(APPEND CMAKE_REQUIRED_LIBRARIES "-L${DIR}")
+   endforeach(DIR)
+ 
+-  list(APPEND CMAKE_REQUIRED_LIBRARIES "${NVJPEG_LIBRARY}" cudart_static culibos dl m pthread rt)
++  list(APPEND CMAKE_REQUIRED_LIBRARIES "${NVJPEG_LIBRARY}" cudart culibos dl m pthread rt)
+   check_cxx_symbol_exists("nvjpegCreateEx" "nvjpeg.h" NVJPEG_LIBRARY_0_2_0)
+   check_cxx_symbol_exists("nvjpegBufferPinnedCreate" "nvjpeg.h" NVJPEG_DECOUPLED_API)
+   check_cxx_symbol_exists("nvjpegDecodeBatchedPreAllocate" "nvjpeg.h" NVJPEG_PREALLOCATE_API)
+-- 
+2.34.1
+
