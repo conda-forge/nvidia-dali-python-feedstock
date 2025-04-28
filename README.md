@@ -13,7 +13,6 @@ A GPU-accelerated library containing highly optimized building blocks and
 an execution engine for data processing to accelerate deep learning training
 and inference applications.
 
-
 Current build status
 ====================
 
