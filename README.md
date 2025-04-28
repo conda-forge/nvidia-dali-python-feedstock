@@ -5,7 +5,7 @@ Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/nvidia-dali-pyt
 
 Home: https://github.com/NVIDIA/dali
 
-Package license: Apache-2.0
+Package license: Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause
 
 Summary: A GPU-accelerated library for data loading and pre-processing to accelerate deep learning applications.
 
