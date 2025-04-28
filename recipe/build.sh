@@ -24,15 +24,15 @@ DALI_LINKING_ARGS=(
 # Continue to dlopen nvimgcodec so that it can be optionally installed
   -DWITH_DYNAMIC_NVIMGCODEC=ON
   -DNVIMGCODEC_DEFAULT_INSTALL_PATH=${PREFIX}
-# Disable all dynamic (dlopen) linkages because we have patched the static links away
-  -DWITH_DYNAMIC_CUDA_TOOLKIT=OFF
-  -DWITH_DYNAMIC_CUFFT=OFF
-  -DWITH_DYNAMIC_NPP=OFF
-  -DWITH_DYNAMIC_NVJPEG=OFF
+# Enable all dynamic (dlopen) linkages because it lets us install DALI without CUDA
+  -DWITH_DYNAMIC_CUDA_TOOLKIT=ON
+# FFTS (third-party) needs to be available in order for cuFFT dlopen to work
+  -DWITH_DYNAMIC_CUFFT=ON
+  -DWITH_DYNAMIC_NPP=ON
+  -DWITH_DYNAMIC_NVJPEG=ON
   -DSTATIC_LIBS=OFF
 )
 
-# FIXME: CMake uses wrong prefix for cufile.h
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
 cmake ${CMAKE_ARGS} \
   -GNinja \
@@ -40,10 +40,10 @@ cmake ${CMAKE_ARGS} \
   -DPYTHON_VERSIONS=${PY_VER} \
   -DBUILD_BENCHMARK=OFF \
   -DBUILD_CFITSIO=ON \
-  -DBUILD_CUFILE=OFF \
+  -DBUILD_CUFILE=ON \
   -DBUILD_CVCUDA=OFF \
   -DBUILD_FFMPEG=OFF \
-  -DBUILD_FFTS=OFF \
+  -DBUILD_FFTS=ON \
   -DBUILD_JPEG_TURBO=ON \
   -DBUILD_LIBSND=OFF \
   -DBUILD_LIBTAR=OFF \
