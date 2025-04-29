@@ -31,6 +31,8 @@ build:
     - cuda_compiler_version == "None"
     - win
     - match(python, "!=3.12.*")
+    # nvjpegBufferPinnedCreate is required but not present
+    - linux-aarch64 and match(cuda_compiler_version, "<12")
 
 requirements:
   ignore_run_exports:
