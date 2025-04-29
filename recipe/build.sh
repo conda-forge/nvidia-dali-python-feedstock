@@ -58,6 +58,9 @@ DALI_LINKING_ARGS=(
   -DCUDAToolkit_TARGET_DIR="${CUDATOOLKIT_PREFIX_PATH}/${targetsDir}" \
 )
 
+# Debug with fewer archs for shorter build times
+export CUDAARCHS="50"
+
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
 cmake ${CMAKE_ARGS} \
   -GNinja \
@@ -91,7 +94,7 @@ cmake ${CMAKE_ARGS} \
   "${DALI_LINKING_ARGS[@]}" \
   $SRC_DIR
 
-cmake --build . -j6
+cmake --build .
 # FIXME: C-API is probably being shipped in python site-packages
 # cmake --install . --strip -v
 
@@ -99,3 +102,4 @@ cd dali/python
 ${PYTHON} -m pip install .
 
 rm ${SP_DIR}/nvidia/dali/include/boost -rf
+rm ${PREFIX}/lib/gdk* -rf
