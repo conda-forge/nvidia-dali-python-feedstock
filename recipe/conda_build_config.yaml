@@ -22,3 +22,5 @@ black:
   - "24.*"
 nvimgcodec:
   - "0.5.*"
+nvjpeg2k:
+  - "0.8.1.*"
