@@ -77,6 +77,7 @@ requirements:
     - libboost-headers  ${{ libboost_headers }}
     - libjpeg-turbo
     - libnvimgcodec-dev  ${{ nvimgcodec }}
+    - libnvjpeg2k-dev  ${{ nvjpeg2k }}
     - libopencv
     - libprotobuf
     - libtiff
@@ -115,6 +116,7 @@ requirements:
   run_constraints:
     - libboost-headers  ${{ libboost_headers }}
     - libnvimgcodec0 ${{ nvimgcodec }}
+    - libnvjpeg2k0 ${{ nvjpeg2k }}
 tests:
   - python:
       imports:
