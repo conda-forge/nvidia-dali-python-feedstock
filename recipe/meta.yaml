@@ -1,0 +1,135 @@
+# TODO: Update package pinnings in conda_build_config for every release
+{% set version = "1.48.0" %}
+
+package:
+  name: nvidia-dali-python
+  version: {{ version }}
+
+source:
+  - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v{{ version }}.tar.gz
+    sha256: 2cf4a1855974e90c88490a2a6a68e707e143c8a62110cf67b99397527eb33458
+    patches:
+      - patches/0001-BLD-Use-shared-library-deps.patch
+      - patches/0002-BLD-Find-nvimgcodec-package-instead-of-downloading-s.patch
+      - patches/0003-BLD-Allow-use-of-nvimgcodec-v0.5.patch
+      - patches/0004-BLD-Use-CUDA-target-include-directory-to-support-cro.patch
+      - patches/0005-BUG-Add-missing-header-for-std-runtime_error.patch
+      - patches/0006-BLD-Link-to-cudart-statically.patch
+
+  - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
+    sha256: 4dd3450bab2287d1c1b271cf4a1420db05294194f0ad9af4e3af592d6f2b4410
+    folder: third_party/cocoapi
+
+  - url: https://github.com/JanuszL/ffts/archive/6ef8d818f46f679c95110ab199ae915fb04bfef5.tar.gz
+    sha256: 1d157157828ce1c85d0a43a6de312ce168b3c5dc1223c6ad3f02e074c3806c15
+    folder: third_party/ffts
+
+build:
+  number: 1
+  skip: true  # [win]
+  skip: true  # [py!=312]
+  skip: true  # [(cuda_compiler_version or "None") == "None"]
+  ignore_run_exports:
+    - cuda-version
+  ignore_run_exports_from:
+    - cudatoolkit       # [(cuda_compiler_version or "").startswith("11")]
+    - libcufft-dev      # [(cuda_compiler_version or "").startswith("12")]
+    - libcufile-dev     # [(cuda_compiler_version or "").startswith("12")]
+    - libcurand-dev     # [(cuda_compiler_version or "").startswith("12")]
+    - libnpp-dev        # [(cuda_compiler_version or "").startswith("12")]
+    - libnvjpeg-dev     # [(cuda_compiler_version or "").startswith("12")]
+    - libnvimgcodec-dev  {{ nvimgcodec }}
+
+requirements:
+  build:
+    - {{ compiler('cuda') }}
+    - {{ compiler('cxx') }}
+    - {{ stdlib('c') }}
+    - cmake 3.*
+    - ninja
+    - cross-python_{{ target_platform }}    # [build_platform != target_platform]
+    - python                                # [build_platform != target_platform]
+    - python-clang                          # [build_platform != target_platform]
+  host:
+    - cudatoolkit       # [(cuda_compiler_version or "").startswith("11")]
+    - cuda-cudart-static   # [(cuda_compiler_version or "").startswith("12")]
+    - cuda-nvml-dev     # [(cuda_compiler_version or "").startswith("12")]
+    - libcufft-dev      # [(cuda_compiler_version or "").startswith("12")]
+    - libcufile-dev     # [(cuda_compiler_version or "").startswith("12")]
+    - libcurand-dev     # [(cuda_compiler_version or "").startswith("12")]
+    - libnpp-dev        # [(cuda_compiler_version or "").startswith("12")]
+    - libnvjpeg-dev     # [(cuda_compiler_version or "").startswith("12")]
+    - cuda-version {{ cuda_compiler_version }}
+    - cfitsio
+    - cutlass
+    - dlpack
+    - libabseil
+    - libboost-headers  {{ libboost_headers }}
+    - libjpeg-turbo
+    - libnvimgcodec-dev  {{ nvimgcodec }}
+    - libopencv
+    - libprotobuf
+    - libtiff
+    - pip
+    - protobuf
+    - pybind11
+    - python
+    - python-clang
+    - rapidjson
+    - setuptools
+    # Runtime deps from below, for stub generator
+    - astunparse {{ astunparse }}
+    - gast {{ gast }}
+    - six {{ six }}
+    - dm-tree {{ dm_tree }}
+    - packaging {{ packaging }}
+    # Stubs autoformat themselves
+    - black  {{ black }}
+  run:
+    - python
+    - astunparse {{ astunparse }}
+    - gast {{ gast }}
+    - six {{ six }}
+    - dm-tree {{ dm_tree }}
+    - packaging {{ packaging }}
+    - {{ pin_compatible('cuda-version', min_pin='x', max_pin='x') }}
+    - cudatoolkit   # [(cuda_compiler_version or "").startswith("11")]
+    - libcufft      # [(cuda_compiler_version or "").startswith("12")]
+    - libcufile     # [(cuda_compiler_version or "").startswith("12")]
+    - libnpp        # [(cuda_compiler_version or "").startswith("12")]
+    - libnvjpeg     # [(cuda_compiler_version or "").startswith("12")]
+  run_constrained:
+    - libboost-headers  {{ libboost_headers }}
+    - libnvimgcodec0 {{ nvimgcodec }}
+test:
+  imports:
+    - nvidia.dali
+  commands:
+    - pip check
+    # rec2idx requires mxnet which is not available on the channel as of 2025.1.9
+    # - rec2idx --help
+    - tfrecord2idx --help
+    - wds2idx --help
+  requires:
+    - pip
+
+about:
+  home: https://github.com/NVIDIA/dali
+  summary: A GPU-accelerated library for data loading and pre-processing to accelerate deep learning applications.
+  description: |
+    A GPU-accelerated library containing highly optimized building blocks and
+    an execution engine for data processing to accelerate deep learning training
+    and inference applications.
+  license: Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause
+  license_file:
+    - LICENSE
+    - COPYRIGHT
+    - third_party/README.rst
+    - third_party/cocoapi/license.txt
+    - third_party/ffts/COPYRIGHT
+
+extra:
+  recipe-maintainers:
+    - conda-forge/cuda
+    - isuruf
+    - timkpaine
