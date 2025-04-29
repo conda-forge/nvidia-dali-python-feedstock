@@ -38,17 +38,17 @@ Current build status
                 </a>
               </td>
             </tr><tr>
+              <td>linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.12.____cpython</td>
+              <td>
+                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.12.____cpython" alt="variant">
+                </a>
+              </td>
+            </tr><tr>
               <td>linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.12.____cpython</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
                   <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.12.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.12.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.12.____cpython" alt="variant">
                 </a>
               </td>
             </tr>
