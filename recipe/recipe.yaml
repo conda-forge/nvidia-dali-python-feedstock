@@ -118,11 +118,12 @@ requirements:
     - libnvimgcodec0 ${{ nvimgcodec }}
     - libnvjpeg2k0 ${{ nvjpeg2k }}
 tests:
-  - python:
-      imports:
-        - nvidia.dali
-      pip_check: true
-  - script:
+  - requirements:
+      run:
+        - pip
+    script:
+      - pip check
+      - python -c "import nvidia.dali"
       - tfrecord2idx --help
       - wds2idx --help
 about:
