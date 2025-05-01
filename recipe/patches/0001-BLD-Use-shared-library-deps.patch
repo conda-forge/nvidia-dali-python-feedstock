@@ -1,4 +1,4 @@
-From 3ddc6337ab3f33944c61a208fdac3ce916293cdf Mon Sep 17 00:00:00 2001
+From ed424f2b083fb3e5fb01cb1d83a323fed040d482 Mon Sep 17 00:00:00 2001
 From: Daniel Ching <dching@nvidia.com>
 Date: Fri, 18 Apr 2025 10:57:08 -0500
 Subject: [PATCH 1/5] BLD: Use shared library deps
@@ -116,7 +116,7 @@ index 01f3d354..41d8c0e5 100644
  
  # CULIBOS needed when using static CUDA libs
 diff --git a/cmake/Dependencies.common.cmake b/cmake/Dependencies.common.cmake
-index 69e23ef1..9f4a404c 100644
+index 30879b73..8f6cf22a 100644
 --- a/cmake/Dependencies.common.cmake
 +++ b/cmake/Dependencies.common.cmake
 @@ -83,7 +83,6 @@ endif()
