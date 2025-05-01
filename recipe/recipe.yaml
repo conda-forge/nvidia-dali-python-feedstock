@@ -104,19 +104,17 @@ requirements:
     - dm-tree ${{ dm_tree }}
     - packaging ${{ packaging }}
     - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
-    - if: match(cuda_compiler_version, "11.*")
-      then:
-        - cudatoolkit
-    - if: match(cuda_compiler_version, "12.*")
-      then:
-        - libcufft
-        - libcufile
-        - libnpp
-        - libnvjpeg
   run_constraints:
+    # These packages are dlopen'd and are already constrained by cuda-version
+    # FIXME: Consider a meta-package like "nvidia-dali-all" for convenience
+    # - if: match(cuda_compiler_version, "12.*")
+    #   then:
+    #     - libcufft
+    #     - libcufile
+    #     - libnpp
+    #     - libnvjpeg
     - libboost-headers  ${{ libboost_headers }}
     - libnvimgcodec0 ${{ nvimgcodec }}
-    - libnvjpeg2k0 ${{ nvjpeg2k }}
 tests:
   - requirements:
       run:
