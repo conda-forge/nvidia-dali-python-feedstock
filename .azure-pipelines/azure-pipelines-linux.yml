@@ -8,21 +8,81 @@ jobs:
     vmImage: ubuntu-latest
   strategy:
     matrix:
+      linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.10.____cpython:
+        CONFIG: linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.10.____cpython
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_64_cuda_compilercuda-nvcccuda_h7bb9c57287
+      linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.11.____cpython:
+        CONFIG: linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.11.____cpython
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_64_cuda_compilercuda-nvcccuda_hf2256bfe7b
       linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.12.____cpython:
         CONFIG: linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.12.____cpython
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
         SHORT_CONFIG: linux_64_cuda_compilercuda-nvcccuda_h48c71cb524
+      linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.13.____cp313:
+        CONFIG: linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.13.____cp313
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_64_cuda_compilercuda-nvcccuda_h8556a38140
+      linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.9.____cpython:
+        CONFIG: linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.9.____cpython
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_64_cuda_compilercuda-nvcccuda_hbc96e31886
+      linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.10.____cpython:
+        CONFIG: linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.10.____cpython
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64-cuda11.8:ubi8
+        SHORT_CONFIG: linux_64_cuda_compilernvcccuda_comp_h112c78d8a1
+      linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.11.____cpython:
+        CONFIG: linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.11.____cpython
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64-cuda11.8:ubi8
+        SHORT_CONFIG: linux_64_cuda_compilernvcccuda_comp_h1d07bead07
       linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.12.____cpython:
         CONFIG: linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.12.____cpython
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64-cuda11.8:ubi8
         SHORT_CONFIG: linux_64_cuda_compilernvcccuda_comp_h40ceef89ec
+      linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.13.____cp313:
+        CONFIG: linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.13.____cp313
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64-cuda11.8:ubi8
+        SHORT_CONFIG: linux_64_cuda_compilernvcccuda_comp_h6b031cd8ee
+      linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.9.____cpython:
+        CONFIG: linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11python3.9.____cpython
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64-cuda11.8:ubi8
+        SHORT_CONFIG: linux_64_cuda_compilernvcccuda_comp_h5619740489
+      linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.10.____cpython:
+        CONFIG: linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.10.____cpython
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_aarch64_cuda_compilercuda-nvc_h01ae4d8a9c
+      linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.11.____cpython:
+        CONFIG: linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.11.____cpython
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_aarch64_cuda_compilercuda-nvc_h4cdcb7a485
       linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.12.____cpython:
         CONFIG: linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.12.____cpython
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
         SHORT_CONFIG: linux_aarch64_cuda_compilercuda-nvc_h4d1735b138
+      linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.13.____cp313:
+        CONFIG: linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.13.____cp313
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_aarch64_cuda_compilercuda-nvc_h21f645e01f
+      linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.9.____cpython:
+        CONFIG: linux_aarch64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13python3.9.____cpython
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_aarch64_cuda_compilercuda-nvc_hb9ec5c526c
   timeoutInMinutes: 360
   variables: {}
 
