@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 [[ ${target_platform} == "linux-64" ]] && targetsDir="targets/x86_64-linux"
 [[ ${target_platform} == "linux-ppc64le" ]] && targetsDir="targets/ppc64le-linux"
@@ -55,7 +56,7 @@ DALI_LINKING_ARGS=(
   -DWITH_DYNAMIC_NVJPEG=ON
   -DSTATIC_LIBS=OFF
   # BLD: Use CUDA target include directory to support cross-compiling
-  -DCUDAToolkit_TARGET_DIR="${CUDATOOLKIT_PREFIX_PATH}/${targetsDir}" \
+  -DCUDAToolkit_TARGET_DIR="${CUDATOOLKIT_PREFIX_PATH}/${targetsDir}"
 )
 
 # Debug with fewer archs for shorter build times
@@ -99,7 +100,20 @@ cmake --build .
 # cmake --install . --strip -v
 
 cd dali/python
-${PYTHON} -m pip install .
+${PYTHON} -m pip install . -v
 
 rm ${SP_DIR}/nvidia/dali/include/boost -rf
 rm ${PREFIX}/lib/gdk* -rf
+
+# When cross-compiling, the python modules are named incorrectly, so we have to
+# fix the name.
+if [[ "$target_platform" != "$build_platform" ]]; then
+  for file in "${SP_DIR}"/nvidia/dali/*cpython-*-x86_64-linux-gnu.so; do
+    newname="${file/x86_64/aarch64}"
+    mv "$file" "$newname"
+    echo "Renamed: $file → $newname"
+  done
+fi
+
+# Just double checking that binaries target correct arch
+file ${SP_DIR}/nvidia/dali/*.so

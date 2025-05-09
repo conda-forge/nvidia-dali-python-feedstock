@@ -49,6 +49,7 @@ requirements:
     - ${{ compiler('cxx') }}
     - ${{ stdlib('c') }}
     - cmake 3.*
+    - file
     - ninja
     - if: build_platform != target_platform
       then:
@@ -120,11 +121,9 @@ tests:
         - pip
     script:
       - pip check
-      - if: build_platform == target_platform
-        then:
-          - python -c "import nvidia.dali"
-          - tfrecord2idx --help
-          - wds2idx --help
+      - python -c "import nvidia.dali"
+      - tfrecord2idx --help
+      - wds2idx --help
 about:
   summary: A GPU-accelerated library for data loading and pre-processing to accelerate deep learning applications.
   description: |
