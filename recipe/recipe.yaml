@@ -114,7 +114,7 @@ requirements:
     #     - libnpp
     #     - libnvjpeg
     - libboost-headers  ${{ libboost_headers }}
-    - libnvimgcodec0 ${{ libnvimgcodec }}
+    - libnvimgcodec ${{ libnvimgcodec }}
 tests:
   - requirements:
       run:
@@ -134,9 +134,8 @@ about:
   license_file:
     - LICENSE
     - COPYRIGHT
+    - Acknowledgements.txt  # Contains licenses for linked libraries
     - third_party/README.rst
-    - third_party/cocoapi/license.txt
-    - third_party/ffts/COPYRIGHT
   homepage: https://github.com/NVIDIA/dali
 extra:
   recipe-maintainers:
