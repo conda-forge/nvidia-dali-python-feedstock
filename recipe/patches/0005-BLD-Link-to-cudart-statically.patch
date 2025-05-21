@@ -1,7 +1,7 @@
 From 77559f0bb605c7061f0022cc21a7d50040425cc9 Mon Sep 17 00:00:00 2001
 From: Daniel Ching <dching@nvidia.com>
 Date: Mon, 28 Apr 2025 18:57:54 -0500
-Subject: [PATCH 5/5] BLD: Link to cudart statically
+Subject: [PATCH 5/6] BLD: Link to cudart statically
 
 ---
  cmake/Dependencies.aarch64-linux.cmake | 3 ++-
@@ -51,5 +51,5 @@ index 74004add..23c2b750 100644
    check_cxx_symbol_exists("nvjpegBufferPinnedCreate" "nvjpeg.h" NVJPEG_DECOUPLED_API)
    check_cxx_symbol_exists("nvjpegDecodeBatchedPreAllocate" "nvjpeg.h" NVJPEG_PREALLOCATE_API)
 -- 
-2.34.1
+2.49.0
 

@@ -1,7 +1,7 @@
 From e0540030b8ccd231e2da2bb62331715886498dae Mon Sep 17 00:00:00 2001
 From: Daniel Ching <dching@nvidia.com>
 Date: Fri, 18 Apr 2025 18:07:15 -0500
-Subject: [PATCH 2/5] BLD: Find nvimgcodec package instead of downloading
+Subject: [PATCH 2/6] BLD: Find nvimgcodec package instead of downloading
  source
 
 ---
@@ -33,5 +33,5 @@ index 8f6cf22a..6568bc85 100644
      include_directories(SYSTEM ${nvimgcodec_INCLUDE_DIR})
  
 -- 
-2.34.1
+2.49.0
 

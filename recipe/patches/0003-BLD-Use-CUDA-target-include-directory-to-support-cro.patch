@@ -1,7 +1,7 @@
 From 72e7e7cea1510984eebd6211f756b1f61d6ff487 Mon Sep 17 00:00:00 2001
 From: Daniel Ching <dching@nvidia.com>
 Date: Mon, 28 Apr 2025 13:58:57 -0500
-Subject: [PATCH 3/5] BLD: Use CUDA target include directory to support
+Subject: [PATCH 3/6] BLD: Use CUDA target include directory to support
  cross-compiling
 
 ---
@@ -198,5 +198,5 @@ index 2569e81f..4d8c5984 100644
          COMMENT "Running nvml.h stub generator"
          VERBATIM)
 -- 
-2.34.1
+2.49.0
 
