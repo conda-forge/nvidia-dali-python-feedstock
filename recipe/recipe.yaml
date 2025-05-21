@@ -120,6 +120,13 @@ tests:
   - requirements:
       run:
         - pip
+        # Test that optional dependencies are co-installable
+        - libcufft
+        - libcufile
+        - libnpp
+        - libnvjpeg
+        - libboost-headers
+        - libnvimgcodec
     script:
       - pip check
       - python -c "import nvidia.dali"
