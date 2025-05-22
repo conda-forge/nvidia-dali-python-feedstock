@@ -1,0 +1,157 @@
+# TODO: Update package pinnings in conda_build_config for every release
+schema_version: 1
+context:
+  version: 1.49.0
+package:
+  name: nvidia-dali-python
+  version: ${{ version }}
+source:
+  - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v${{ version }}.tar.gz
+    sha256: da4f2d2a59ae3d9e08c4004b16fdd36bd8585474381c215cbd649c76daeea717
+    patches:
+      - patches/0001-BLD-Use-shared-library-deps.patch
+      - patches/0002-BLD-Find-nvimgcodec-package-instead-of-downloading-s.patch
+      - patches/0003-BLD-Use-CUDA-target-include-directory-to-support-cro.patch
+      - patches/0004-BUG-Add-missing-header-for-std-runtime_error.patch
+      - patches/0005-BLD-Link-to-cudart-statically.patch
+      - patches/0006-DOC-Patch-dlopen-failure-message-and-dlopen-search-p.patch
+  - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
+    sha256: 4dd3450bab2287d1c1b271cf4a1420db05294194f0ad9af4e3af592d6f2b4410
+    target_directory: third_party/cocoapi
+  - url: https://github.com/JanuszL/ffts/archive/6ef8d818f46f679c95110ab199ae915fb04bfef5.tar.gz
+    sha256: 1d157157828ce1c85d0a43a6de312ce168b3c5dc1223c6ad3f02e074c3806c15
+    target_directory: third_party/ffts
+build:
+  number: 0
+  skip:
+    - cuda_compiler_version == "None"
+    - win
+    # - match(python, "!=3.12.*")
+    # nvjpegBufferPinnedCreate is required but not present
+    - linux and aarch64 and match(cuda_compiler_version, "<12")
+requirements:
+  ignore_run_exports:
+    by_name:
+      - cuda-version
+    from_package:
+      - if: match(cuda_compiler_version, "11.*")
+        then:
+          - cudatoolkit
+      - if: match(cuda_compiler_version, "12.*")
+        then:
+          - libcufft-dev
+          - libcufile-dev
+          - libcurand-dev
+          - libnpp-dev
+          - libnvjpeg-dev
+      - libnvimgcodec-dev  ${{ libnvimgcodec }}
+  build:
+    - ${{ compiler('cuda') }}
+    - ${{ compiler('cxx') }}
+    - ${{ stdlib('c') }}
+    - cmake 3.*
+    - file
+    - ninja
+    - if: build_platform != target_platform
+      then:
+        - cross-python_${{ target_platform }}
+        - python
+        - python-clang
+  host:
+    - if: match(cuda_compiler_version, "11.*")
+      then:
+        - cudatoolkit
+    - if: match(cuda_compiler_version, "12.*")
+      then:
+        - cuda-cudart-static
+        - cuda-nvml-dev
+        - libcufft-dev
+        - libcufile-dev
+        - libcurand-dev
+        - libnpp-dev
+        - libnvjpeg-dev
+    - cuda-version ${{ cuda_compiler_version }}.*
+    - cfitsio
+    - cutlass
+    - dlpack
+    - libabseil
+    - libboost-headers  ${{ libboost_headers }}
+    - libjpeg-turbo
+    - libnvimgcodec-dev  ${{ libnvimgcodec }}
+    - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
+    - libopencv
+    - libprotobuf
+    - libtiff
+    - pip
+    - protobuf
+    - pybind11
+    - python
+    - python-clang
+    - rapidjson
+    - setuptools
+    # Runtime deps from below, for stub generator
+    - astunparse ${{ astunparse }}
+    - gast ${{ gast }}
+    - six ${{ six }}
+    - dm-tree ${{ dm_tree }}
+    - packaging ${{ packaging }}
+    # Stubs autoformat themselves
+    - black  ${{ black }}
+  run:
+    - python
+    - astunparse ${{ astunparse }}
+    - gast ${{ gast }}
+    - six ${{ six }}
+    - dm-tree ${{ dm_tree }}
+    - packaging ${{ packaging }}
+    - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
+  run_constraints:
+    # These packages are dlopen'd and are already constrained by cuda-version
+    # FIXME: Consider a meta-package like "nvidia-dali-all" for convenience
+    # - if: match(cuda_compiler_version, "12.*")
+    #   then:
+    #     - libcufft
+    #     - libcufile
+    #     - libnpp
+    #     - libnvjpeg
+    - libboost-headers  ${{ libboost_headers }}
+    - libnvimgcodec ${{ libnvimgcodec }}
+tests:
+  - requirements:
+      run:
+        - pip
+        # Test that optional dependencies are co-installable
+        - if: match(cuda_compiler_version, "11.*")
+          then:
+            - cudatoolkit
+        - if: match(cuda_compiler_version, "12.*")
+          then:
+            - libcufft
+            - libcufile
+            - libnpp
+            - libnvjpeg
+        - libboost-headers
+        - libnvimgcodec
+    script:
+      - pip check
+      - python -c "import nvidia.dali"
+      - tfrecord2idx --help
+      - wds2idx --help
+about:
+  summary: A GPU-accelerated library for data loading and pre-processing to accelerate deep learning applications.
+  description: |
+    A GPU-accelerated library containing highly optimized building blocks and
+    an execution engine for data processing to accelerate deep learning training
+    and inference applications.
+  license: Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause
+  license_file:
+    - LICENSE
+    - COPYRIGHT
+    - Acknowledgements.txt  # Contains licenses for linked libraries
+    - third_party/README.rst
+  homepage: https://github.com/NVIDIA/dali
+extra:
+  recipe-maintainers:
+    - conda-forge/cuda
+    - isuruf
+    - timkpaine
