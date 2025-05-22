@@ -121,10 +121,15 @@ tests:
       run:
         - pip
         # Test that optional dependencies are co-installable
-        - libcufft
-        - libcufile
-        - libnpp
-        - libnvjpeg
+        - if: match(cuda_compiler_version, "11.*")
+          then:
+            - cudatoolkit
+        - if: match(cuda_compiler_version, "12.*")
+          then:
+            - libcufft
+            - libcufile
+            - libnpp
+            - libnvjpeg
         - libboost-headers
         - libnvimgcodec
     script:
