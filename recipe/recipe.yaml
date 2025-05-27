@@ -1,13 +1,13 @@
 # TODO: Update package pinnings in conda_build_config for every release
 schema_version: 1
 context:
-  version: 1.49.0
+  version: "1.50.0"
 package:
   name: nvidia-dali-python
   version: ${{ version }}
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: da4f2d2a59ae3d9e08c4004b16fdd36bd8585474381c215cbd649c76daeea717
+    sha256: 9330bfcb29ec504707d80cd187ff9b3dd494f556ec2a1171a5c86e381f0bee53
     patches:
       - patches/0001-BLD-Use-shared-library-deps.patch
       - patches/0002-BLD-Find-nvimgcodec-package-instead-of-downloading-s.patch
