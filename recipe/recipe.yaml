@@ -70,6 +70,7 @@ requirements:
         - libnpp-dev
         - libnvjpeg-dev
     - cuda-version ${{ cuda_compiler_version }}.*
+    - aws-sdk-cpp
     - cfitsio
     - cutlass
     - dlpack
@@ -80,7 +81,10 @@ requirements:
     - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
     - libopencv
     - libprotobuf
+    - libsndfile
+    - libtar
     - libtiff
+    - lmdb
     - pip
     - protobuf
     - pybind11
