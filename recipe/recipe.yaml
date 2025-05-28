@@ -10,11 +10,10 @@ source:
     sha256: 9330bfcb29ec504707d80cd187ff9b3dd494f556ec2a1171a5c86e381f0bee53
     patches:
       - patches/0001-BLD-Use-shared-library-deps.patch
-      - patches/0002-BLD-Find-nvimgcodec-package-instead-of-downloading-s.patch
-      - patches/0003-BLD-Use-CUDA-target-include-directory-to-support-cro.patch
-      - patches/0004-BUG-Add-missing-header-for-std-runtime_error.patch
-      - patches/0005-BLD-Link-to-cudart-statically.patch
-      - patches/0006-DOC-Patch-dlopen-failure-message-and-dlopen-search-p.patch
+      - patches/0002-BLD-Use-CUDA-target-include-directory-to-support-cro.patch
+      - patches/0003-BUG-Add-missing-header-for-std-runtime_error.patch
+      - patches/0004-BLD-Link-to-cudart-statically.patch
+      - patches/0005-DOC-Patch-dlopen-failure-message-and-dlopen-search-p.patch
   - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
     sha256: 4dd3450bab2287d1c1b271cf4a1420db05294194f0ad9af4e3af592d6f2b4410
     target_directory: third_party/cocoapi
