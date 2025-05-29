@@ -1,7 +1,7 @@
 From 461bbc45725fb22fe4ce4c4b14d7527b9b432752 Mon Sep 17 00:00:00 2001
 From: Daniel Ching <dching@nvidia.com>
 Date: Mon, 28 Apr 2025 18:57:54 -0500
-Subject: [PATCH 4/5] BLD: Link to cudart statically
+Subject: [PATCH 4/9] BLD: Link to cudart statically
 
 ---
  cmake/Dependencies.aarch64-linux.cmake | 3 ++-

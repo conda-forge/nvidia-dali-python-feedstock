@@ -1,0 +1,28 @@
+From a1e60d921adebf914b724bc850b969e516d0a2bc Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Thu, 29 May 2025 15:10:21 -0500
+Subject: [PATCH 6/9] BLD: Silence warning from setuptools about packages
+ config
+
+---
+ dali/python/setup.py.in | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/dali/python/setup.py.in b/dali/python/setup.py.in
+index 4768c101..daa29fdb 100644
+--- a/dali/python/setup.py.in
++++ b/dali/python/setup.py.in
+@@ -54,7 +54,9 @@ For more details please check the
+       version='@DALI_VERSION@',
+       author='NVIDIA Corporation',
+       license='Apache License 2.0',
+-      packages=find_packages(),
++      packages=find_packages(
++        include=['nvidia.dali*],
++      ),
+       include_package_data=True,
+       zip_safe=False,
+       python_requires='>=3.9, <3.14',
+-- 
+2.49.0
+
