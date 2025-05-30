@@ -18,7 +18,7 @@ index 4768c101..daa29fdb 100644
        license='Apache License 2.0',
 -      packages=find_packages(),
 +      packages=find_packages(
-+        include=['nvidia.dali*],
++        include=['nvidia.dali*'],
 +      ),
        include_package_data=True,
        zip_safe=False,
