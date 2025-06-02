@@ -150,5 +150,5 @@ index c139cccb..0ce82e37 100644
    check_cxx_symbol_exists("nvjpegBufferPinnedCreate" "nvjpeg.h" NVJPEG_DECOUPLED_API)
    check_cxx_symbol_exists("nvjpegDecodeBatchedPreAllocate" "nvjpeg.h" NVJPEG_PREALLOCATE_API)
 -- 
-2.49.0
+2.34.1
 
