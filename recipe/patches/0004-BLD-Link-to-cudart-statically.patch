@@ -1,0 +1,55 @@
+From 461bbc45725fb22fe4ce4c4b14d7527b9b432752 Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Mon, 28 Apr 2025 18:57:54 -0500
+Subject: [PATCH 4/9] BLD: Link to cudart statically
+
+---
+ cmake/Dependencies.aarch64-linux.cmake | 3 ++-
+ cmake/Dependencies.cmake               | 3 ++-
+ cmake/modules/FindNVJPEG.cmake         | 2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/cmake/Dependencies.aarch64-linux.cmake b/cmake/Dependencies.aarch64-linux.cmake
+index ac010892..cae40eda 100644
+--- a/cmake/Dependencies.aarch64-linux.cmake
++++ b/cmake/Dependencies.aarch64-linux.cmake
+@@ -25,7 +25,8 @@ set(CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES "${CUDA_TARGET}/include")
+ 
+ list(APPEND DALI_LIBS ${CUDA_LIBRARIES})
+ 
+-CUDA_find_library(CUDART_LIB cudart)
++CUDA_find_library(CUDART_LIB cudart_static)
++list(APPEND DALI_EXCLUDES libcudart_static.a)
+ 
+ # NVIDIA NPPC library
+ if (NOT WITH_DYNAMIC_NPP)
+diff --git a/cmake/Dependencies.cmake b/cmake/Dependencies.cmake
+index 41d8c0e5..dfc77bc4 100644
+--- a/cmake/Dependencies.cmake
++++ b/cmake/Dependencies.cmake
+@@ -16,7 +16,8 @@
+ # CUDA Toolkit libraries (including NVJPEG)
+ ##################################################################
+ 
+-CUDA_find_library(CUDART_LIB cudart)
++CUDA_find_library(CUDART_LIB cudart_static)
++list(APPEND DALI_EXCLUDES libcudart_static.a)
+ 
+ # For NVJPEG
+ if (BUILD_NVJPEG)
+diff --git a/cmake/modules/FindNVJPEG.cmake b/cmake/modules/FindNVJPEG.cmake
+index 74004add..23c2b750 100644
+--- a/cmake/modules/FindNVJPEG.cmake
++++ b/cmake/modules/FindNVJPEG.cmake
+@@ -44,7 +44,7 @@ if(NVJPEG_FOUND)
+     list(APPEND CMAKE_REQUIRED_LIBRARIES "-L${DIR}")
+   endforeach(DIR)
+ 
+-  list(APPEND CMAKE_REQUIRED_LIBRARIES "${NVJPEG_LIBRARY}" cudart culibos dl m pthread rt)
++  list(APPEND CMAKE_REQUIRED_LIBRARIES "${NVJPEG_LIBRARY}" cudart_static culibos dl m pthread rt)
+   check_cxx_symbol_exists("nvjpegCreateEx" "nvjpeg.h" NVJPEG_LIBRARY_0_2_0)
+   check_cxx_symbol_exists("nvjpegBufferPinnedCreate" "nvjpeg.h" NVJPEG_DECOUPLED_API)
+   check_cxx_symbol_exists("nvjpegDecodeBatchedPreAllocate" "nvjpeg.h" NVJPEG_PREALLOCATE_API)
+-- 
+2.34.1
+

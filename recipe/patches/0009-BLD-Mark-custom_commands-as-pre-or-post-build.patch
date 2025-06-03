@@ -1,0 +1,72 @@
+From 3f5cd1b67f700e061e0c9ce49903fb35cffa03e7 Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Thu, 29 May 2025 15:50:38 -0500
+Subject: [PATCH 9/9] BLD: Mark custom_commands as pre- or post-build
+
+---
+ cmake/Utils.cmake          | 1 +
+ dali/CMakeLists.txt        | 3 +++
+ dali/python/CMakeLists.txt | 2 ++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/cmake/Utils.cmake b/cmake/Utils.cmake
+index d159f0aa..49cd0476 100644
+--- a/cmake/Utils.cmake
++++ b/cmake/Utils.cmake
+@@ -148,6 +148,7 @@ macro(copy_post_build TARGET_NAME SRC DST)
+ 
+     add_custom_command(
+     TARGET install_${TARGET_NAME}
++    POST_BUILD
+     COMMAND mkdir -p "${DST}" && cp -r
+             "${SRC}"
+             "${DST}")
+diff --git a/dali/CMakeLists.txt b/dali/CMakeLists.txt
+index e126c1d2..5e144f56 100644
+--- a/dali/CMakeLists.txt
++++ b/dali/CMakeLists.txt
+@@ -181,18 +181,21 @@ if (BUILD_PYTHON)
+     file(RELATIVE_PATH HEADER_RELATIVE ${PROJECT_SOURCE_DIR} ${INSTALL_HEADER})
+     add_custom_command(
+       TARGET install_headers
++      POST_BUILD
+       COMMAND install -D "${INSTALL_HEADER}" "${PROJECT_BINARY_DIR}/${DALI_INCLUDE_DIR}/${HEADER_RELATIVE}")
+   endforeach(INSTALL_HEADER)
+ 
+   # Copy proper `include` dir
+   add_custom_command(
+     TARGET install_headers
++    POST_BUILD
+     COMMAND cp -r "${PROJECT_SOURCE_DIR}/include/." "${PROJECT_BINARY_DIR}/${DALI_INCLUDE_DIR}"
+   )
+ 
+   # Copy boost/preprocessor include files
+   add_custom_command(
+     TARGET install_headers
++    POST_BUILD
+     COMMAND cp -rL "${PROJECT_SOURCE_DIR}/third_party/boost/preprocessor/include/." "${PROJECT_BINARY_DIR}/${DALI_INCLUDE_DIR}/"
+   )
+ endif()
+diff --git a/dali/python/CMakeLists.txt b/dali/python/CMakeLists.txt
+index 8118633c..9784695e 100644
+--- a/dali/python/CMakeLists.txt
++++ b/dali/python/CMakeLists.txt
+@@ -80,6 +80,7 @@ if(NOT ${CMAKE_CROSSCOMPILING} AND NOT ${BUILD_WITH_ASAN})
+   # backend from the current build.
+   add_custom_command(
+     TARGET dali_python_generate_stubs
++    POST_BUILD
+     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+     COMMAND PYTHONPATH=${PYTHONPATH} ${PYTHON_STUBGEN_INTERPRETER} ${PROJECT_SOURCE_DIR}/internal_tools/python_stub_generator.py --wheel_path ${PROJECT_BINARY_DIR}/dali/python/nvidia/dali
+   )
+@@ -89,6 +90,7 @@ if(NOT ${CMAKE_CROSSCOMPILING} AND NOT ${BUILD_WITH_ASAN})
+     add_custom_target(dali_python_format_stubs ALL DEPENDS dali_python dali_python_generate_stubs)
+     add_custom_command(
+       TARGET dali_python_format_stubs
++      POST_BUILD
+       WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+       COMMAND find dali/python/nvidia/dali -name '*.pyi' -print0 | xargs -0 black --line-length 100 --target-version py38 --verbose
+     )
+-- 
+2.34.1
+

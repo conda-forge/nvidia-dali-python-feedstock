@@ -1,0 +1,43 @@
+From 4945cbd64fb9d74273119dfbcc5bc4277a0cc4b0 Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Thu, 29 May 2025 15:49:56 -0500
+Subject: [PATCH 8/9] BLD: Set CMake Policy 175 to NEW
+
+https://cmake.org/cmake/help/latest/policy/CMP0175.html
+---
+ CMakeLists.txt    | 3 +++
+ cmake/Utils.cmake | 4 ++++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 40d9a493..4bf1b2f9 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -25,6 +25,9 @@ include(cmake/CUDA_utils.cmake)
+ if (POLICY CMP0075)
+   cmake_policy(SET CMP0075 NEW)
+ endif()
++if (POLICY CMP0175)
++  cmake_policy(SET CMP0175 NEW)
++endif()
+ 
+ project(DALI CUDA CXX C)
+ 
+diff --git a/cmake/Utils.cmake b/cmake/Utils.cmake
+index df83e3b3..d159f0aa 100644
+--- a/cmake/Utils.cmake
++++ b/cmake/Utils.cmake
+@@ -44,6 +44,10 @@
+ # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++if (POLICY CMP0175)
++  cmake_policy(SET CMP0175 NEW)
++endif()
++
+ macro(caffe_parse_header FILENAME FILE_VAR)
+   set(vars_regex "")
+   set(__parnet_scope OFF)
+-- 
+2.34.1
+
