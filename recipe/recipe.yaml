@@ -89,6 +89,7 @@ requirements:
     - libtar
     - libtiff
     - lmdb
+    - nvtx-c
     - pip
     - protobuf
     - pybind11
