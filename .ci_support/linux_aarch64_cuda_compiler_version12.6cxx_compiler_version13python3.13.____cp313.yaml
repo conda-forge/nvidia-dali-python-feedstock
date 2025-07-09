@@ -28,6 +28,8 @@ dm_tree:
 - <=0.1.9
 docker_image:
 - quay.io/condaforge/linux-anvil-x86_64:alma9
+ffmpeg:
+- '7'
 gast:
 - '>=0.3.3,<=0.6.0'
 libabseil:

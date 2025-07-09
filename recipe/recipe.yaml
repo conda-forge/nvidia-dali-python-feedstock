@@ -55,6 +55,7 @@ requirements:
     - cmake 3.*
     - file
     - ninja
+    - pkgconf
     - if: build_platform != target_platform
       then:
         - cross-python_${{ target_platform }}
@@ -78,6 +79,8 @@ requirements:
     - cfitsio
     - cutlass
     - dlpack
+    - ffmpeg
+    - ffmpeg * lgpl*
     - libabseil
     - libboost-headers  ${{ libboost_headers }}
     - libjpeg-turbo
