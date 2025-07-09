@@ -25,7 +25,7 @@ source:
     sha256: 1d157157828ce1c85d0a43a6de312ce168b3c5dc1223c6ad3f02e074c3806c15
     target_directory: third_party/ffts
 build:
-  number: 0
+  number: 1
   skip:
     - cuda_compiler_version == "None"
     - win
@@ -55,6 +55,7 @@ requirements:
     - cmake 3.*
     - file
     - ninja
+    - pkgconf
     - if: build_platform != target_platform
       then:
         - cross-python_${{ target_platform }}
@@ -78,6 +79,8 @@ requirements:
     - cfitsio
     - cutlass
     - dlpack
+    - ffmpeg
+    - ffmpeg * lgpl*
     - libabseil
     - libboost-headers  ${{ libboost_headers }}
     - libjpeg-turbo
@@ -89,6 +92,7 @@ requirements:
     - libtar
     - libtiff
     - lmdb
+    - nvtx-c
     - pip
     - protobuf
     - pybind11
