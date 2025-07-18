@@ -18,6 +18,7 @@ source:
       - patches/0007-BLD-Use-shared-libtar-instead-of-static.patch
       - patches/0008-BLD-Set-CMake-Policy-175-to-NEW.patch
       - patches/0009-BLD-Mark-custom_commands-as-pre-or-post-build.patch
+      - patches/0010-BLD-Patch-nvcomp-search-path-and-dlopen-error-messag.patch
   - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
     sha256: 4dd3450bab2287d1c1b271cf4a1420db05294194f0ad9af4e3af592d6f2b4410
     target_directory: third_party/cocoapi
@@ -48,6 +49,7 @@ requirements:
           - libnpp-dev
           - libnvjpeg-dev
       - libnvimgcodec-dev  ${{ libnvimgcodec }}
+      - libnvcomp-dev  ${{ libnvcomp }}
   build:
     - ${{ compiler('cuda') }}
     - ${{ compiler('cxx') }}
@@ -84,6 +86,7 @@ requirements:
     - libabseil
     - libboost-headers  ${{ libboost_headers }}
     - libjpeg-turbo
+    - libnvcomp-dev  ${{ libnvcomp }}
     - libnvimgcodec-dev  ${{ libnvimgcodec }}
     - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
     - libopencv
@@ -126,6 +129,7 @@ requirements:
     #     - libnpp
     #     - libnvjpeg
     - libboost-headers  ${{ libboost_headers }}
+    - libnvcomp  ${{ libnvcomp }}
     - libnvimgcodec ${{ libnvimgcodec }}
 tests:
   - requirements:
@@ -142,6 +146,7 @@ tests:
             - libnpp
             - libnvjpeg
         - libboost-headers
+        - libnvcomp
         - libnvimgcodec
     script:
       - pip check

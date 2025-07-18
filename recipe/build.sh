@@ -36,9 +36,10 @@ ln -sf $PREFIX/include/cutlass third_party/cutlass/include/
 
 export CXXFLAGS="$CXXFLAGS -isystem $PREFIX/include/opencv4"
 
+sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVCOMP@//g" dali/python/setup.py.in
+sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVIMGCODEC@//g" dali/python/setup.py.in
 sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVJPEG2K@//g" dali/python/setup.py.in
 sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVTIFF@//g" dali/python/setup.py.in
-sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVIMGCODEC@//g" dali/python/setup.py.in
 
 mkdir -p build
 cd build
@@ -53,6 +54,7 @@ DALI_LINKING_ARGS=(
 # FFTS (third-party) needs to be available in order for cuFFT dlopen to work
   -DWITH_DYNAMIC_CUFFT=ON
   -DWITH_DYNAMIC_NPP=ON
+  -DWITH_DYNAMIC_NVCOMP=ON
   -DWITH_DYNAMIC_NVJPEG=ON
   -DSTATIC_LIBS=OFF
   # BLD: Use CUDA target include directory to support cross-compiling
@@ -79,6 +81,7 @@ cmake ${CMAKE_ARGS} \
   -DBUILD_LIBTAR=ON \
   -DBUILD_LIBTIFF=ON \
   -DBUILD_LMDB=ON \
+  -DBUILD_NVCOMP=ON \
   -DBUILD_NVDEC=ON \
   -DBUILD_NVIMAGECODEC=ON \
   -DBUILD_NVJPEG=ON \
@@ -93,6 +96,7 @@ cmake ${CMAKE_ARGS} \
   -DBUILD_WITH_UBSAN=OFF \
   -DCUDA_TARGET_ARCHS="$CUDAARCHS" \
   -DFFMPEG_ROOT_DIR=$PREFIX \
+  -DNVCOMP_ROOT_DIR=$PREFIX \
   "${DALI_LINKING_ARGS[@]}" \
   $SRC_DIR
 

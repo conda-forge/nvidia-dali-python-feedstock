@@ -38,6 +38,8 @@ libboost_headers:
 - 1.87.*
 libjpeg_turbo:
 - '3'
+libnvcomp:
+- 4.*
 libnvimgcodec:
 - 0.5.*
 libnvjpeg2k:
