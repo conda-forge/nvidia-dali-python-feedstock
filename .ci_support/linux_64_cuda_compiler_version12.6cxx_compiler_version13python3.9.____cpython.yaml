@@ -1,7 +1,7 @@
 astunparse:
 - '>=1.6.0,<=1.6.3'
 aws_sdk_cpp:
-- 1.11.510
+- 1.11.606
 black:
 - 25.*
 c_stdlib:
@@ -33,7 +33,7 @@ ffmpeg:
 gast:
 - '>=0.3.3,<=0.6.0'
 libabseil:
-- '20250127'
+- '20250512'
 libboost_headers:
 - 1.87.*
 libjpeg_turbo:
@@ -45,7 +45,7 @@ libnvjpeg2k:
 libopencv:
 - 4.11.0
 libprotobuf:
-- 5.29.3
+- 6.31.1
 libsndfile:
 - '1.2'
 libtiff:
