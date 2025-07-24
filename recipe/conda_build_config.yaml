@@ -3,6 +3,8 @@ libnvjpeg2k:
   - ">=0.8.0,<0.9.0"
 libnvimgcodec:
   - "0.5.*"
+libnvcomp:
+  - "4.*"
 # https://github.com/NVIDIA/DALI/tree/main/third_party
 libboost_headers:
  - "1.87.*"
