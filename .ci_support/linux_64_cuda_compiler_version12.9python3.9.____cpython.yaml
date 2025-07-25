@@ -19,11 +19,11 @@ channel_targets:
 cuda_compiler:
 - cuda-nvcc
 cuda_compiler_version:
-- '12.6'
+- '12.9'
 cxx_compiler:
 - gxx
 cxx_compiler_version:
-- '13'
+- '14'
 dm_tree:
 - <=0.1.9
 docker_image:
@@ -61,7 +61,7 @@ pin_run_as_build:
     min_pin: x.x
     max_pin: x.x
 python:
-- 3.11.* *_cpython
+- 3.9.* *_cpython
 six:
 - '>=1.16,<=1.17'
 target_platform:
