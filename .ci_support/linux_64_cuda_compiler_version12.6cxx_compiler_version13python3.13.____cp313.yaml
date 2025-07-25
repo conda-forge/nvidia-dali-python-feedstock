@@ -45,7 +45,7 @@ libnvimgcodec:
 libnvjpeg2k:
 - '>=0.8.0,<0.9.0'
 libopencv:
-- 4.11.0
+- 4.12.0
 libprotobuf:
 - 5.29.3
 libsndfile:
