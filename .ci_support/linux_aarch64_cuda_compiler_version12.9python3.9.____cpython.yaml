@@ -19,11 +19,11 @@ channel_targets:
 cuda_compiler:
 - cuda-nvcc
 cuda_compiler_version:
-- '12.6'
+- '12.9'
 cxx_compiler:
 - gxx
 cxx_compiler_version:
-- '13'
+- '14'
 dm_tree:
 - <=0.1.9
 docker_image:
@@ -35,7 +35,7 @@ gast:
 libabseil:
 - '20250127'
 libboost_headers:
-- 1.87.*
+- 1.88.*
 libjpeg_turbo:
 - '3'
 libnvcomp:
@@ -45,7 +45,7 @@ libnvimgcodec:
 libnvjpeg2k:
 - '>=0.8.0,<0.9.0'
 libopencv:
-- 4.11.0
+- 4.12.0
 libprotobuf:
 - 5.29.3
 libsndfile:
@@ -61,7 +61,7 @@ pin_run_as_build:
     min_pin: x.x
     max_pin: x.x
 python:
-- 3.10.* *_cpython
+- 3.9.* *_cpython
 six:
 - '>=1.16,<=1.17'
 target_platform:
