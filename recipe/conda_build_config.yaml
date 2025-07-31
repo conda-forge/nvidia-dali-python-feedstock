@@ -7,7 +7,7 @@ libnvcomp:
   - "4.*"
 # https://github.com/NVIDIA/DALI/tree/main/third_party
 libboost_headers:
- - "1.87.*"
+ - "1.88.*"
 # https://github.com/NVIDIA/DALI/blob/main/dali/python/setup.py.in
 astunparse:
   - ">=1.6.0,<=1.6.3"
