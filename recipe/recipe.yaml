@@ -1,13 +1,13 @@
 # TODO: Update package pinnings in conda_build_config for every release
 schema_version: 1
 context:
-  version: "1.50.0"
+  version: "1.51.0"
 package:
   name: nvidia-dali-python
   version: ${{ version }}
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: 9330bfcb29ec504707d80cd187ff9b3dd494f556ec2a1171a5c86e381f0bee53
+    sha256: c0e92796288e94e355c0cea25d367ae2aa3bb7bbb8eebc1ff2294a2e53380a94
     patches:
       - patches/0001-BLD-Use-shared-library-deps.patch
       - patches/0002-BLD-Use-CUDA-target-include-directory-to-support-cro.patch
@@ -26,7 +26,7 @@ source:
     sha256: 1d157157828ce1c85d0a43a6de312ce168b3c5dc1223c6ad3f02e074c3806c15
     target_directory: third_party/ffts
 build:
-  number: 4
+  number: 0
   skip:
     - cuda_compiler_version == "None"
     - win
