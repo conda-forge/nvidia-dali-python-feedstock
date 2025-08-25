@@ -29,7 +29,7 @@ dm_tree:
 docker_image:
 - quay.io/condaforge/linux-anvil-x86_64:alma9
 ffmpeg:
-- '7'
+- '8'
 gast:
 - '>=0.3.3,<=0.6.0'
 libabseil:
@@ -68,4 +68,5 @@ target_platform:
 - linux-64
 zip_keys:
 - - cxx_compiler_version
+  - c_stdlib_version
   - cuda_compiler_version

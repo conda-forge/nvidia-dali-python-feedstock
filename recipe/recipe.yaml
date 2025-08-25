@@ -26,7 +26,7 @@ source:
     sha256: 1d157157828ce1c85d0a43a6de312ce168b3c5dc1223c6ad3f02e074c3806c15
     target_directory: third_party/ffts
 build:
-  number: 4
+  number: 5
   skip:
     - cuda_compiler_version == "None"
     - win
