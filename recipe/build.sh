@@ -12,18 +12,6 @@ if [ -z "${targetsDir+x}" ]; then
     exit 1
 fi
 
-if [[ ${cuda_compiler_version} == "11."* ]]; then
-  CUDATOOLKIT_PREFIX_PATH=/usr/local/cuda-11.8
-fi
-if [[ ${cuda_compiler_version} == "12."* ]]; then
-  CUDATOOLKIT_PREFIX_PATH=${PREFIX}
-fi
-
-if [ -z "${CUDATOOLKIT_PREFIX_PATH+x}" ]; then
-    echo "cuda_compiler_version ${cuda_compiler_version} is unknown! CUDATOOLKIT_PREFIX_PATH must be defined!" >&2
-    exit 1
-fi
-
 mkdir -p third_party/boost/preprocessor/include
 ln -sf $PREFIX/include/boost third_party/boost/preprocessor/include/
 
@@ -58,7 +46,7 @@ DALI_LINKING_ARGS=(
   -DWITH_DYNAMIC_NVJPEG=ON
   -DSTATIC_LIBS=OFF
   # BLD: Use CUDA target include directory to support cross-compiling
-  -DCUDAToolkit_TARGET_DIR="${CUDATOOLKIT_PREFIX_PATH}/${targetsDir}"
+  -DCUDAToolkit_TARGET_DIR="${PREFIX}/${targetsDir}"
 )
 
 # Debug with fewer archs for shorter build times

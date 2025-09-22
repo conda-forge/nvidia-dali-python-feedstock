@@ -31,23 +31,16 @@ build:
     - cuda_compiler_version == "None"
     - win
     # - match(python, "!=3.12.*")
-    # nvjpegBufferPinnedCreate is required but not present
-    - linux and aarch64 and match(cuda_compiler_version, "<12")
 requirements:
   ignore_run_exports:
     by_name:
       - cuda-version
     from_package:
-      - if: match(cuda_compiler_version, "11.*")
-        then:
-          - cudatoolkit
-      - if: match(cuda_compiler_version, "12.*")
-        then:
-          - libcufft-dev
-          - libcufile-dev
-          - libcurand-dev
-          - libnpp-dev
-          - libnvjpeg-dev
+      - libcufft-dev
+      - libcufile-dev
+      - libcurand-dev
+      - libnpp-dev
+      - libnvjpeg-dev
       - libnvimgcodec-dev  ${{ libnvimgcodec }}
       - libnvcomp-dev  ${{ libnvcomp }}
   build:
@@ -64,18 +57,13 @@ requirements:
         - python
         - python-clang
   host:
-    - if: match(cuda_compiler_version, "11.*")
-      then:
-        - cudatoolkit
-    - if: match(cuda_compiler_version, "12.*")
-      then:
-        - cuda-cudart-static
-        - cuda-nvml-dev
-        - libcufft-dev
-        - libcufile-dev
-        - libcurand-dev
-        - libnpp-dev
-        - libnvjpeg-dev
+    - cuda-cudart-static
+    - cuda-nvml-dev
+    - libcufft-dev
+    - libcufile-dev
+    - libcurand-dev
+    - libnpp-dev
+    - libnvjpeg-dev
     - cuda-version ${{ cuda_compiler_version }}.*
     - aws-sdk-cpp
     - cfitsio
@@ -136,15 +124,10 @@ tests:
       run:
         - pip
         # Test that optional dependencies are co-installable
-        - if: match(cuda_compiler_version, "11.*")
-          then:
-            - cudatoolkit
-        - if: match(cuda_compiler_version, "12.*")
-          then:
-            - libcufft
-            - libcufile
-            - libnpp
-            - libnvjpeg
+        - libcufft
+        - libcufile
+        - libnpp
+        - libnvjpeg
         - libboost-headers
         - libnvcomp
         - libnvimgcodec
