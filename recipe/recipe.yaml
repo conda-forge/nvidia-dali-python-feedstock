@@ -57,6 +57,10 @@ requirements:
         - python
         - python-clang
   host:
+  # NOTE: static libraries culibos and nvjpeg required for correct feature detection
+    - if: linux and match(cuda_compiler_version, "13.*")
+      then:
+        - cuda-culibos-static
     - cuda-cudart-static
     - cuda-nvml-dev
     - libcufft-dev
@@ -64,6 +68,7 @@ requirements:
     - libcurand-dev
     - libnpp-dev
     - libnvjpeg-dev
+    - libnvjpeg-static
     - cuda-version ${{ cuda_compiler_version }}.*
     - aws-sdk-cpp
     - cfitsio
@@ -79,6 +84,7 @@ requirements:
     - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
     - libopencv
     - libprotobuf
+    - libprotobuf-static
     - libsndfile
     - libtar
     - libtiff
@@ -91,6 +97,7 @@ requirements:
     - python-clang
     - rapidjson
     - setuptools
+    - zlib
     # Runtime deps from below, for stub generator
     - astunparse ${{ astunparse }}
     - gast ${{ gast }}
