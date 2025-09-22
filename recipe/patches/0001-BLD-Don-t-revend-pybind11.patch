@@ -1,0 +1,24 @@
+From 778890ab429e8cd468ea531dcc3d7583517b2eec Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Mon, 22 Sep 2025 14:29:14 -0500
+Subject: [PATCH 1/7] BLD: Don't revend pybind11
+
+---
+ cmake/Dependencies.common.cmake | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/cmake/Dependencies.common.cmake b/cmake/Dependencies.common.cmake
+index 8eb16499..e228c7ac 100644
+--- a/cmake/Dependencies.common.cmake
++++ b/cmake/Dependencies.common.cmake
+@@ -84,7 +84,6 @@ endif()
+ ##################################################################
+ if (BUILD_PYTHON)
+   set(PYBIND11_CPP_STANDARD -std=c++14)
+-  check_and_add_cmake_submodule(${PROJECT_SOURCE_DIR}/third_party/pybind11)
+ endif()
+ 
+ ##################################################################
+-- 
+2.51.0
+
