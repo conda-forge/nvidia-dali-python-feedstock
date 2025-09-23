@@ -47,8 +47,6 @@ DALI_LINKING_ARGS=(
   -DSTATIC_LIBS=OFF
   # BLD: Use CUDA target include directory to support cross-compiling
   -DCUDAToolkit_TARGET_DIR="${PREFIX}/${targetsDir}"
-  # Link to Protobuf shared object instead of static library
-  -DProtobuf_USE_STATIC_LIBS=NO
 )
 
 # Debug with fewer archs for shorter build times

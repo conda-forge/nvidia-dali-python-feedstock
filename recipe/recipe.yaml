@@ -80,7 +80,6 @@ requirements:
     - libnvimgcodec-dev  ${{ libnvimgcodec }}
     - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
     - libopencv
-    - libprotobuf
     - libprotobuf-static
     - libsndfile
     - libtar
