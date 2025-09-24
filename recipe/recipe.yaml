@@ -15,7 +15,7 @@ source:
       - patches/0004-DOC-Patch-dlopen-failure-message-and-dlopen-search-p.patch
       - patches/0005-BLD-Use-shared-libtar-instead-of-static.patch
       - patches/0006-BLD-Patch-nvcomp-search-path-and-dlopen-error-messag.patch
-      - patches/0007-BLD-Remove-CUDA-arch-validation.patch
+      # - patches/0007-BLD-Remove-CUDA-arch-validation.patch
   - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
     sha256: 4dd3450bab2287d1c1b271cf4a1420db05294194f0ad9af4e3af592d6f2b4410
     target_directory: third_party/cocoapi
