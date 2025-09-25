@@ -1,0 +1,47 @@
+From 3c6c6e86ec5c461fcd5141088146f38638f5787b Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Fri, 18 Jul 2025 19:06:18 -0500
+Subject: [PATCH 6/7] BLD: Patch nvcomp search path and dlopen error message
+ for conda
+
+---
+ dali/core/CMakeLists.txt    | 5 ++---
+ dali/core/dynlink_nvcomp.cc | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/dali/core/CMakeLists.txt b/dali/core/CMakeLists.txt
+index 5d4af6d2..b9e0fcb8 100644
+--- a/dali/core/CMakeLists.txt
++++ b/dali/core/CMakeLists.txt
+@@ -98,13 +98,12 @@ if (BUILD_NVCOMP)
+       OUTPUT ${NVCOMP_GENERATED_STUB}
+       COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=nvComp --
+                   "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/nvcomp.json" ${NVCOMP_GENERATED_STUB}
+-                  "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/nvcomp/lz4.h"
+-                  ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES_DIRECTIVE}
++                  "${NVCOMP_ROOT_DIR}/include/nvcomp/lz4.h" "-I${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}"
+                   # for some reason QNX fails with 'too many errors emitted' is this is not set
+                   "-ferror-limit=0"
+                   ${DEFAULT_COMPILER_INCLUDE}
+       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py
+-              "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/nvcomp/lz4.h"
++              "${NVCOMP_ROOT_DIR}/include/nvcomp/lz4.h"
+               "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/nvcomp.json"
+       COMMENT "Running nvcomp/lz4.hstub generator"
+       VERBATIM)
+diff --git a/dali/core/dynlink_nvcomp.cc b/dali/core/dynlink_nvcomp.cc
+index 616e187d..bf4fe575 100644
+--- a/dali/core/dynlink_nvcomp.cc
++++ b/dali/core/dynlink_nvcomp.cc
+@@ -35,7 +35,7 @@ NVCOMP loadNvCompFileLibrary() {
+     ret = dlopen(__nvCompfileLibName, RTLD_NOW);
+ 
+     if (!ret) {
+-      fprintf(stderr, "dlopen libnvcomp.so failed with error %s!. Please install libnvcomp.\n",
++      fprintf(stderr, "dlopen libnvcomp.so failed with error %s!. Please install libnvcomp: `conda install -c conda-forge libnvcomp`.\n",
+               dlerror());
+     }
+   }
+-- 
+2.51.0
+

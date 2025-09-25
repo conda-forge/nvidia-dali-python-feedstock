@@ -35,19 +35,17 @@ gast:
 libabseil:
 - '20250512'
 libboost_headers:
-- 1.88.*
+- 1.89.*
 libjpeg_turbo:
 - '3'
 libnvcomp:
-- 4.*
+- 5.0.0.*
 libnvimgcodec:
-- 0.5.*
+- 0.6.*
 libnvjpeg2k:
-- '>=0.8.0,<0.9.0'
+- '>=0.8.0,<0.10.0'
 libopencv:
 - 4.12.0
-libprotobuf:
-- 6.31.1
 libsndfile:
 - '1.2'
 libtiff:
@@ -55,13 +53,13 @@ libtiff:
 lmdb:
 - 0.9.29
 packaging:
-- <=24.2
+- <=25.0
 pin_run_as_build:
   python:
     min_pin: x.x
     max_pin: x.x
 python:
-- 3.11.* *_cpython
+- 3.10.* *_cpython
 six:
 - '>=1.16,<=1.17'
 target_platform:
@@ -70,3 +68,5 @@ zip_keys:
 - - cxx_compiler_version
   - c_stdlib_version
   - cuda_compiler_version
+zlib:
+- '1'

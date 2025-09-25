@@ -12,18 +12,6 @@ if [ -z "${targetsDir+x}" ]; then
     exit 1
 fi
 
-if [[ ${cuda_compiler_version} == "11."* ]]; then
-  CUDATOOLKIT_PREFIX_PATH=/usr/local/cuda-11.8
-fi
-if [[ ${cuda_compiler_version} == "12."* ]]; then
-  CUDATOOLKIT_PREFIX_PATH=${PREFIX}
-fi
-
-if [ -z "${CUDATOOLKIT_PREFIX_PATH+x}" ]; then
-    echo "cuda_compiler_version ${cuda_compiler_version} is unknown! CUDATOOLKIT_PREFIX_PATH must be defined!" >&2
-    exit 1
-fi
-
 mkdir -p third_party/boost/preprocessor/include
 ln -sf $PREFIX/include/boost third_party/boost/preprocessor/include/
 
@@ -58,13 +46,15 @@ DALI_LINKING_ARGS=(
   -DWITH_DYNAMIC_NVJPEG=ON
   -DSTATIC_LIBS=OFF
   # BLD: Use CUDA target include directory to support cross-compiling
-  -DCUDAToolkit_TARGET_DIR="${CUDATOOLKIT_PREFIX_PATH}/${targetsDir}"
+  -DCUDAToolkit_TARGET_DIR="${PREFIX}/${targetsDir}"
 )
 
 # Debug with fewer archs for shorter build times
 # export CUDAARCHS="50"
+export CUDAARCHS="all-major"
 
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
+# -DCUDA_TARGET_ARCHS="$CUDAARCHS" \
 cmake ${CMAKE_ARGS} \
   -GNinja \
   -DBUILD_PYTHON=ON \
@@ -94,7 +84,6 @@ cmake ${CMAKE_ARGS} \
   -DBUILD_WITH_ASAN=OFF \
   -DBUILD_WITH_LSAN=OFF \
   -DBUILD_WITH_UBSAN=OFF \
-  -DCUDA_TARGET_ARCHS="$CUDAARCHS" \
   -DFFMPEG_ROOT_DIR=$PREFIX \
   -DNVCOMP_ROOT_DIR=$PREFIX \
   "${DALI_LINKING_ARGS[@]}" \
