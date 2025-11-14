@@ -1,0 +1,163 @@
+From e8ec3234cd1fbd7519ce8ad8c217494c8d52a260 Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Wed, 21 May 2025 13:31:05 -0500
+Subject: [PATCH 2/4] DOC: Patch dlopen failure message and dlopen search paths
+
+---
+ CMakeLists.txt                        |  2 +-
+ dali/core/dynlink_cufile.cc           |  2 +-
+ dali/kernels/signal/fft/cufft_wrap.cc |  2 +-
+ dali/npp/npp_wrap.cc                  |  6 +++---
+ dali/nvimgcodec/nvimgcodec_wrap.cc    | 11 +++++------
+ dali/nvjpeg/nvjpeg_wrap.cc            |  2 +-
+ dali/operators/operators.cc           |  6 +++---
+ dali/util/nvml_wrap.cc                |  2 +-
+ 8 files changed, 16 insertions(+), 17 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9b956c99..c508a298 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -243,7 +243,7 @@ foreach(rpath IN ITEMS
+   "$ORIGIN/../npp/lib"
+   "$ORIGIN/../nvjpeg/lib"
+   "$ORIGIN/../nvimgcodec"
+-  "${NVIMGCODEC_DEFAULT_INSTALL_PATH}/lib64")
++  "${NVIMGCODEC_DEFAULT_INSTALL_PATH}/lib")
+   message(STATUS "Add to rpath: ${rpath}")
+   list(APPEND CMAKE_BUILD_RPATH ${rpath})
+   list(APPEND CMAKE_INSTALL_RPATH ${rpath})
+diff --git a/dali/core/dynlink_cufile.cc b/dali/core/dynlink_cufile.cc
+index 64bce978..825adc8a 100644
+--- a/dali/core/dynlink_cufile.cc
++++ b/dali/core/dynlink_cufile.cc
+@@ -35,7 +35,7 @@ CUFILE loadCufileLibrary() {
+     ret = dlopen(__CufileLibName, RTLD_NOW);
+ 
+     if (!ret) {
+-      fprintf(stderr, "dlopen libcufile.so failed with error %s!. Please install libcufile.\n",
++      fprintf(stderr, "dlopen libcufile.so failed with error %s!. Please install libcufile: `conda install -c conda-forge libcufile`.\n",
+               dlerror());
+     }
+   }
+diff --git a/dali/kernels/signal/fft/cufft_wrap.cc b/dali/kernels/signal/fft/cufft_wrap.cc
+index 99478ea0..de9f091f 100644
+--- a/dali/kernels/signal/fft/cufft_wrap.cc
++++ b/dali/kernels/signal/fft/cufft_wrap.cc
+@@ -43,7 +43,7 @@ CUFFTDIVER loadCufftLibrary() {
+     ret = dlopen(__CufftLibName, RTLD_NOW);
+     if (!ret) {
+       throw std::runtime_error("dlopen libcufft.so failed!. Please install "
+-                                "CUDA toolkit or cuFFT python wheel.");
++                               "libcufft: `conda install -c conda-forge libcufft`.");
+     }
+   }
+   return ret;
+diff --git a/dali/npp/npp_wrap.cc b/dali/npp/npp_wrap.cc
+index 247d3120..e8021418 100644
+--- a/dali/npp/npp_wrap.cc
++++ b/dali/npp/npp_wrap.cc
+@@ -56,7 +56,7 @@ NPPCDRIVER loadNppcLibrary() {
+     ret = dlopen(__NppcLibName, RTLD_NOW);
+     if (!ret) {
+       throw std::runtime_error("dlopen libnppc.so failed!. Please install "
+-          "CUDA toolkit or NPP python wheel.");
++          "libnpp: `conda install -c conda-forge libnpp`.");
+     }
+   }
+   return ret;
+@@ -70,7 +70,7 @@ NPPICCDRIVER loadNppiccLibrary() {
+     ret = dlopen(__NppiccLibName, RTLD_NOW);
+     if (!ret) {
+       throw std::runtime_error("dlopen libnppicc.so failed!. Please install "
+-          "CUDA toolkit or NPP python wheel.");
++          "libnpp: `conda install -c conda-forge libnpp`.");
+     }
+   }
+   return ret;
+@@ -84,7 +84,7 @@ NPPIGDRIVER loadNppigLibrary() {
+     ret = dlopen(__NppigLibName, RTLD_NOW);
+     if (!ret) {
+       throw std::runtime_error("dlopen libnppig.so failed!. Please install "
+-          "CUDA toolkit or NPP python wheel.");
++          "libnpp: `conda install -c conda-forge libnpp`.");
+     }
+   }
+   return ret;
+diff --git a/dali/nvimgcodec/nvimgcodec_wrap.cc b/dali/nvimgcodec/nvimgcodec_wrap.cc
+index 1aa2785a..2b201f88 100644
+--- a/dali/nvimgcodec/nvimgcodec_wrap.cc
++++ b/dali/nvimgcodec/nvimgcodec_wrap.cc
+@@ -37,11 +37,11 @@ const char nvimgcodecLibNameFullVer[] = "libnvimgcodec.so." FULL_VER_STR;
+ const char nvimgcodecLibNameMajorVer[] = "libnvimgcodec.so." MAJOR_VER_STR;
+ const char nvimgcodecLibName[] = "libnvimgcodec.so";
+ const char nvimgcodecLibDefaultPathFullVer[] =
+-    NVIMGCODEC_DEFAULT_INSTALL_PATH "/lib64/libnvimgcodec.so." FULL_VER_STR;
++    NVIMGCODEC_DEFAULT_INSTALL_PATH "/lib/libnvimgcodec.so." FULL_VER_STR;
+ const char nvimgcodecLibDefaultPathMajorVer[] =
+-    NVIMGCODEC_DEFAULT_INSTALL_PATH "/lib64/libnvimgcodec.so." MAJOR_VER_STR;
++    NVIMGCODEC_DEFAULT_INSTALL_PATH "/lib/libnvimgcodec.so." MAJOR_VER_STR;
+ const char nvimgcodecLibDefaultPath[] =
+-    NVIMGCODEC_DEFAULT_INSTALL_PATH "/lib64/libnvimgcodec.so";
++    NVIMGCODEC_DEFAULT_INSTALL_PATH "/lib/libnvimgcodec.so";
+ 
+ NVIMGCODECDRIVER loadNvimgcodecLibrary() {
+   static const char *paths[] = {nvimgcodecLibNameFullVer,
+@@ -60,9 +60,8 @@ NVIMGCODECDRIVER loadNvimgcodecLibrary() {
+   if (!ret) {
+     int cuda_version_major = CUDA_VERSION / 1000;  // 11020 -> 11, 12000 -> 12
+     throw std::runtime_error(
+-        "dlopen libnvimgcodec.so failed!. Please install nvimagecodec: See "
+-        "https://developer.nvidia.com/nvimgcodec-downloads or simply do `pip install "
+-        "nvidia-nvimgcodec-cu" + std::to_string(cuda_version_major) + "`.");
++        "dlopen libnvimgcodec.so failed!. Please install "
++        "libnvimgcodec: `conda install -c conda-forge libnvimgcodec`.");
+   }
+   return ret;
+ }
+diff --git a/dali/nvjpeg/nvjpeg_wrap.cc b/dali/nvjpeg/nvjpeg_wrap.cc
+index 95e25e6d..d9f18aa6 100644
+--- a/dali/nvjpeg/nvjpeg_wrap.cc
++++ b/dali/nvjpeg/nvjpeg_wrap.cc
+@@ -44,7 +44,7 @@ NVJPEGDRIVER loadNvjpegLibrary() {
+     ret = dlopen(__NvjpegLibName, RTLD_NOW);
+     if (!ret) {
+       throw std::runtime_error("dlopen libnvjpeg.so failed!. Please install "
+-                                "CUDA toolkit or nvJPEG python wheel.");
++                                "libnvjpeg: `conda install -c conda-forge libnvjpeg`.");
+     }
+   }
+   return ret;
+diff --git a/dali/operators/operators.cc b/dali/operators/operators.cc
+index 742f9885..621a6787 100644
+--- a/dali/operators/operators.cc
++++ b/dali/operators/operators.cc
+@@ -83,9 +83,9 @@ DLL_PUBLIC void EnforceMinimumNvimgcodecVersion() {
+     ss << "DALI requires nvImageCodec at minimum version " << NVIMGCODEC_VER_MAJOR << "."
+        << NVIMGCODEC_VER_MINOR << "." << NVIMGCODEC_VER_PATCH << ", but got " << major << "."
+        << minor << "." << patch
+-       << ". Please upgrade: See https://developer.nvidia.com/nvimgcodec-downloads or simply do "
+-          "`pip install nvidia-nvimgcodec-cu" + std::to_string(cuda_version_major) + "~="
+-       << NVIMGCODEC_VER_MAJOR << "." << NVIMGCODEC_VER_MINOR << "." << NVIMGCODEC_VER_PATCH
++       << ". Please upgrade: `conda install -c conda-forge libnvimgcodec"
++       << ">=" << NVIMGCODEC_VER_MAJOR << "." << NVIMGCODEC_VER_MINOR << "." << NVIMGCODEC_VER_PATCH
++       << ",==" << NVIMGCODEC_VER_MAJOR << "." << NVIMGCODEC_VER_MINOR
+        << "`.";
+     throw std::runtime_error(ss.str());
+   }
+diff --git a/dali/util/nvml_wrap.cc b/dali/util/nvml_wrap.cc
+index b2cfe612..a8d95a4b 100644
+--- a/dali/util/nvml_wrap.cc
++++ b/dali/util/nvml_wrap.cc
+@@ -38,7 +38,7 @@ NVMLRIVER loadNvmlLibrary() {
+     ret = dlopen(__NvmlLibName, RTLD_NOW);
+ 
+     if (!ret) {
+-      fprintf(stderr, "dlopen libnvidia-ml.so failed!. Please install GPU dirver");
++      fprintf(stderr, "dlopen libnvidia-ml.so failed!. Please install GPU driver");
+     }
+   }
+   return ret;
+-- 
+2.51.0
+
