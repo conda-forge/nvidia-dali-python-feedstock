@@ -1,7 +1,7 @@
 From e8ec3234cd1fbd7519ce8ad8c217494c8d52a260 Mon Sep 17 00:00:00 2001
 From: Daniel Ching <dching@nvidia.com>
 Date: Wed, 21 May 2025 13:31:05 -0500
-Subject: [PATCH 2/4] DOC: Patch dlopen failure message and dlopen search paths
+Subject: [PATCH 2/5] DOC: Patch dlopen failure message and dlopen search paths
 
 ---
  CMakeLists.txt                        |  2 +-
