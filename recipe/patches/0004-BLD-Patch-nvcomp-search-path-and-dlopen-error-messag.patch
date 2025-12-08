@@ -1,7 +1,7 @@
-,From 19ba66a8b3f242231acf20eed5ccfcded6f6b18b Mon Sep 17 00:00:00 2001
+From 19ba66a8b3f242231acf20eed5ccfcded6f6b18b Mon Sep 17 00:00:00 2001
 From: Daniel Ching <dching@nvidia.com>
 Date: Fri, 18 Jul 2025 19:06:18 -0500
-Subject: [PATCH 4/5] BLD: Patch nvcomp search path and dlopen error message
+Subject: [PATCH 4/4] BLD: Patch nvcomp search path and dlopen error message
  for conda
 
 ---
