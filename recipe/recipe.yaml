@@ -93,6 +93,7 @@ requirements:
     - setuptools
     - zlib
     # Runtime deps from below, for stub generator
+    - makefun ${{ makefun }}
     - astunparse ${{ astunparse }}
     - gast ${{ gast }}
     - six ${{ six }}
@@ -102,6 +103,8 @@ requirements:
     - black  ${{ black }}
   run:
     - python
+    - nvtx ${{ nxtx }}
+    - makefun ${{ makefun }}
     - astunparse ${{ astunparse }}
     - gast ${{ gast }}
     - six ${{ six }}
