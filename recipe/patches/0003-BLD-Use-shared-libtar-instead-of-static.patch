@@ -1,0 +1,25 @@
+From 1a1c8fcdef81f24727f2898ba277a790f9397c4c Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Thu, 29 May 2025 15:31:35 -0500
+Subject: [PATCH 3/4] BLD: Use shared libtar instead of static
+
+---
+ cmake/Dependencies.common.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/Dependencies.common.cmake b/cmake/Dependencies.common.cmake
+index 999f55a3..2537095c 100644
+--- a/cmake/Dependencies.common.cmake
++++ b/cmake/Dependencies.common.cmake
+@@ -116,7 +116,7 @@ endif()
+ ##################################################################
+ if(BUILD_LIBTAR)
+   find_library(libtar_LIBS
+-          NAMES libtar.a tar libtar
++          NAMES tar libtar
+           PATHS ${LIBTAR_ROOT_DIR} "/usr/local" ${CMAKE_SYSTEM_PREFIX_PATH}
+           PATH_SUFFIXES lib lib64)
+   if(${libtar_LIBS} STREQUAL libtar_LIBS-NOTFOUND)
+-- 
+2.51.0
+

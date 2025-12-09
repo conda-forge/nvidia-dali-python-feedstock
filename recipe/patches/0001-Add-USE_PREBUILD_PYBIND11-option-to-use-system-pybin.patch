@@ -1,0 +1,48 @@
+From a868483fa5ffc8bcf45a1590d4a58b2ae9c78bfc Mon Sep 17 00:00:00 2001
+From: Janusz Lisiecki <jlisiecki@nvidia.com>
+Date: Mon, 8 Dec 2025 09:14:00 +0100
+Subject: [PATCH] Add USE_PREBUILD_PYBIND11 option to use system pybind11
+
+- Adds cmake_dependent_option to allow using prebuilt pybind11 from the
+  system instead of the submodule. This option depends on BUILD_PYTHON
+  being enabled.
+
+Signed-off-by: Janusz Lisiecki <jlisiecki@nvidia.com>
+---
+ CMakeLists.txt                  | 2 ++
+ cmake/Dependencies.common.cmake | 6 +++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d9ddd211e..5a9073cae 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -84,6 +84,8 @@ cmake_dependent_option(BUILD_PYTHON "Build Python bindings" ON
+                        "NOT BUILD_DALI_NODEPS" OFF)
+ cmake_dependent_option(BUILD_SHM_WRAPPER "Build shared memory bindings, needs BUILD_PYTHON=ON" ON
+                       "NOT BUILD_DALI_NODEPS" OFF)
++cmake_dependent_option(USE_PREBUILD_PYBIND11 "Use prebuilt pybind11 from the system instead of the submodule" OFF
++                       "BUILD_PYTHON" OFF)
+ cmake_dependent_option(BUILD_LMDB "Build LMDB readers" ON
+                        "NOT BUILD_DALI_NODEPS" OFF)
+ cmake_dependent_option(BUILD_JPEG_TURBO "Build with libjpeg-turbo support" ON
+diff --git a/cmake/Dependencies.common.cmake b/cmake/Dependencies.common.cmake
+index e967b04ca..63902a2dc 100644
+--- a/cmake/Dependencies.common.cmake
++++ b/cmake/Dependencies.common.cmake
+@@ -83,7 +83,11 @@ endif()
+ # PyBind
+ ##################################################################
+ if (BUILD_PYTHON)
+-  check_and_add_cmake_submodule(${PROJECT_SOURCE_DIR}/third_party/pybind11)
++  if (USE_PREBUILD_PYBIND11)
++    find_package(pybind11 REQUIRED)
++  else()
++    check_and_add_cmake_submodule(${PROJECT_SOURCE_DIR}/third_party/pybind11)
++  endif()
+ endif()
+ 
+ ##################################################################
+-- 
+2.43.0
+

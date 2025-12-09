@@ -1,0 +1,222 @@
+From 9d8054f6459f4b0385ae45c309418d33d394dc25 Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Mon, 28 Apr 2025 13:58:57 -0500
+Subject: [PATCH 1/4] BLD: Use CUDA target include directory to support
+ cross-compiling
+
+---
+ CMakeLists.txt                                      |  2 ++
+ cmake/modules/FindNVJPEG.cmake                      |  4 ++--
+ dali/core/CMakeLists.txt                            | 12 +++++-------
+ dali/kernels/signal/fft/CMakeLists.txt              |  5 ++---
+ dali/npp/CMakeLists.txt                             |  5 ++---
+ dali/nvimgcodec/CMakeLists.txt                      |  3 +--
+ dali/nvjpeg/CMakeLists.txt                          |  5 +++--
+ dali/operators/video/dynlink_nvcuvid/CMakeLists.txt |  3 +--
+ dali/util/CMakeLists.txt                            |  5 ++---
+ 9 files changed, 20 insertions(+), 24 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 393275ac..9b956c99 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,6 +30,8 @@ endif()
+ 
+ project(DALI CUDA CXX C)
+ 
++find_package(CUDAToolkit REQUIRED)
++
+ set(DALI_ROOT ${PROJECT_SOURCE_DIR})
+ set(CUDA_VERSION "${CMAKE_CUDA_COMPILER_VERSION}")
+ 
+diff --git a/cmake/modules/FindNVJPEG.cmake b/cmake/modules/FindNVJPEG.cmake
+index c139cccb..7e13e6fe 100644
+--- a/cmake/modules/FindNVJPEG.cmake
++++ b/cmake/modules/FindNVJPEG.cmake
+@@ -13,7 +13,7 @@
+ set(NVJPEG_ROOT_DIR "" CACHE PATH "Folder contains NVJPEG")
+ 
+ find_path(NVJPEG_INCLUDE_DIR nvjpeg.h
+-    PATHS ${NVJPEG_ROOT_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}
++    PATHS ${NVJPEG_ROOT_DIR} "${CUDAToolkit_TARGET_DIR}"
+     PATH_SUFFIXES include)
+ 
+ find_library(NVJPEG_LIBRARY libnvjpeg_static.a nvjpeg
+@@ -38,7 +38,7 @@ if(NVJPEG_FOUND)
+ 
+   set(CMAKE_REQUIRED_INCLUDES_OLD ${CMAKE_REQUIRED_INCLUDES_OLD})
+   list(APPEND CMAKE_REQUIRED_INCLUDES "${NVJPEG_INCLUDE_DIR}")
+-  list(APPEND CMAKE_REQUIRED_INCLUDES "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
++  list(APPEND CMAKE_REQUIRED_INCLUDES "${CUDAToolkit_TARGET_DIR}/include")
+   set(CMAKE_REQUIRED_LIBRARIES_OLD ${CMAKE_REQUIRED_LIBRARIES})
+   foreach(DIR ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
+     list(APPEND CMAKE_REQUIRED_LIBRARIES "-L${DIR}")
+diff --git a/dali/core/CMakeLists.txt b/dali/core/CMakeLists.txt
+index afd72f34..1aa32ba1 100644
+--- a/dali/core/CMakeLists.txt
++++ b/dali/core/CMakeLists.txt
+@@ -52,15 +52,14 @@ if (NOT LINK_DRIVER)
+       OUTPUT ${CUDA_GENERATED_STUB}
+       COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=Cuda --
+                   "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/cuda.json" ${CUDA_GENERATED_STUB}
+-                  "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/cuda.h"
+-                  ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES_DIRECTIVE}
++                  "${CUDAToolkit_TARGET_DIR}/include/cuda.h" "-I${CUDAToolkit_TARGET_DIR}/include"
+                   # for some reason QNX fails with 'too many errors emitted' is this is not set
+                   "-ferror-limit=0"
+                   # let clang know which architecutre we compile for
+                   "--target=${CMAKE_SYSTEM_PROCESSOR}-linux-gnu"
+                   ${DEFAULT_COMPILER_INCLUDE}
+       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py
+-              "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/cuda.h"
++              "${CUDAToolkit_TARGET_DIR}/include/cuda.h"
+               "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/cuda.json"
+       COMMENT "Running cuda.h stub generator"
+       VERBATIM)
+@@ -79,15 +78,14 @@ if (BUILD_CUFILE)
+       OUTPUT ${CUFILE_GENERATED_STUB}
+       COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=Cufile --
+                   "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/cufile.json" ${CUFILE_GENERATED_STUB}
+-                  "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/cufile.h"
+-                  ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES_DIRECTIVE}
++                  "${CUDAToolkit_TARGET_DIR}/include/cufile.h" "-I${CUDAToolkit_TARGET_DIR}/include"
+                   # for some reason QNX fails with 'too many errors emitted' is this is not set
+                   "-ferror-limit=0"
+                   # let clang know which architecutre we compile for
+                   "--target=${CMAKE_SYSTEM_PROCESSOR}-linux-gnu"
+                   ${DEFAULT_COMPILER_INCLUDE}
+       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py
+-              "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/cufile.h"
++              "${CUDAToolkit_TARGET_DIR}/include/cufile.h"
+               "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/cufile.json"
+       COMMENT "Running cufile.h stub generator"
+       VERBATIM)
+@@ -125,7 +123,7 @@ list(FILTER DALI_CORE_SRCS EXCLUDE REGEX ".*dynlink_nvcomp.cc")
+ 
+ adjust_source_file_language_property("${DALI_CORE_SRCS}")
+ add_library(dali_core ${LIBTYPE} ${DALI_CORE_SRCS})
+-target_include_directories(dali_core SYSTEM PUBLIC ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
++target_include_directories(dali_core SYSTEM PUBLIC "${CUDAToolkit_TARGET_DIR}/include")
+ target_link_libraries(dali_core PRIVATE dynlink_cuda ${CUDART_LIB})
+ if (BUILD_CUFILE)
+     target_link_libraries(dali_core PRIVATE dynlink_cufile)
+diff --git a/dali/kernels/signal/fft/CMakeLists.txt b/dali/kernels/signal/fft/CMakeLists.txt
+index 680743b1..aa2f3fb9 100644
+--- a/dali/kernels/signal/fft/CMakeLists.txt
++++ b/dali/kernels/signal/fft/CMakeLists.txt
+@@ -42,15 +42,14 @@ if (WITH_DYNAMIC_CUFFT)
+         OUTPUT ${CUFFT_GENERATED_STUB}
+         COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=Cufft --
+                     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../internal_tools/stub_generator/cufft.json" ${CUFFT_GENERATED_STUB}
+-                    "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/cufft.h"
+-                    ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES_DIRECTIVE}
++                    "${CUDAToolkit_TARGET_DIR}/include/cufft.h" "-I${CUDAToolkit_TARGET_DIR}/include"
+                     # for some reason QNX fails with 'too many errors emitted' is this is not set
+                     "-ferror-limit=0"
+                     # let clang know which architecutre we compile for
+                     "--target=${CMAKE_SYSTEM_PROCESSOR}-linux-gnu"
+                     ${DEFAULT_COMPILER_INCLUDE}
+         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../internal_tools/stub_generator/stub_codegen.py
+-                "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/cufft.h"
++                "${CUDAToolkit_TARGET_DIR}/include/cufft.h"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../../../../internal_tools/stub_generator/cufft.json"
+         COMMENT "Running cufft.h stub generator"
+         VERBATIM)
+diff --git a/dali/npp/CMakeLists.txt b/dali/npp/CMakeLists.txt
+index facd31bf..a3141ce8 100644
+--- a/dali/npp/CMakeLists.txt
++++ b/dali/npp/CMakeLists.txt
+@@ -44,15 +44,14 @@ if (WITH_DYNAMIC_NPP)
+         OUTPUT ${NPP_GENERATED_STUB}
+         COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=Npp --
+                     "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/npp.json" ${NPP_GENERATED_STUB}
+-                    "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/npp.h"
+-                    ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES_DIRECTIVE}
++                    "${CUDAToolkit_TARGET_DIR}/include/npp.h" "-I${CUDAToolkit_TARGET_DIR}/include"
+                     # for some reason QNX fails with 'too many errors emitted' is this is not set
+                     "-ferror-limit=0"
+                     # let clang know which architecutre we compile for
+                     "--target=${CMAKE_SYSTEM_PROCESSOR}-linux-gnu"
+                     ${DEFAULT_COMPILER_INCLUDE}
+         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py
+-                "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/npp.h"
++                "${CUDAToolkit_TARGET_DIR}/include/npp.h"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/npp.json"
+         COMMENT "Running npp.h stub generator"
+         VERBATIM)
+diff --git a/dali/nvimgcodec/CMakeLists.txt b/dali/nvimgcodec/CMakeLists.txt
+index 6d95dd64..93c4dd9e 100644
+--- a/dali/nvimgcodec/CMakeLists.txt
++++ b/dali/nvimgcodec/CMakeLists.txt
+@@ -44,8 +44,7 @@ if(WITH_DYNAMIC_NVIMGCODEC)
+     OUTPUT ${NVIMGCODEC_GENERATED_STUB}
+     COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=Nvimgcodec --
+     "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/nvimgcodec.json" ${NVIMGCODEC_GENERATED_STUB}
+-    "${nvimgcodec_INCLUDE_DIR}/nvimgcodec.h" "-I${nvimgcodec_INCLUDE_DIR}"
+-    ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES_DIRECTIVE}
++    "${nvimgcodec_INCLUDE_DIR}/nvimgcodec.h" "-I${nvimgcodec_INCLUDE_DIR}" "-I${CUDAToolkit_TARGET_DIR}/include"
+     # for some reason QNX fails with 'too many errors emitted' if this is not set
+     "-ferror-limit=0"
+     # let clang know which architecutre we compile for
+diff --git a/dali/nvjpeg/CMakeLists.txt b/dali/nvjpeg/CMakeLists.txt
+index 771bae16..91e10eb0 100644
+--- a/dali/nvjpeg/CMakeLists.txt
++++ b/dali/nvjpeg/CMakeLists.txt
+@@ -44,7 +44,8 @@ if(WITH_DYNAMIC_NVJPEG)
+     OUTPUT ${NVJPEG_GENERATED_STUB}
+     COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=Nvjpeg --
+     "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/nvjpeg.json" ${NVJPEG_GENERATED_STUB}
+-    "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/nvjpeg.h"
++    "${CUDAToolkit_TARGET_DIR}/include/nvjpeg.h"
++    "-I${CUDAToolkit_TARGET_DIR}/include"
+     ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES_DIRECTIVE}
+     # for some reason QNX fails with 'too many errors emitted' is this is not set
+     "-ferror-limit=0"
+@@ -52,7 +53,7 @@ if(WITH_DYNAMIC_NVJPEG)
+     "--target=${CMAKE_SYSTEM_PROCESSOR}-linux-gnu"
+     ${DEFAULT_COMPILER_INCLUDE}
+     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py
+-    "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/nvjpeg.h"
++    "${CUDAToolkit_TARGET_DIR}/include/nvjpeg.h"
+     "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/nvjpeg.json"
+     COMMENT "Running nvjpeg.h stub generator"
+     VERBATIM)
+diff --git a/dali/operators/video/dynlink_nvcuvid/CMakeLists.txt b/dali/operators/video/dynlink_nvcuvid/CMakeLists.txt
+index f76f6e68..75b11b88 100644
+--- a/dali/operators/video/dynlink_nvcuvid/CMakeLists.txt
++++ b/dali/operators/video/dynlink_nvcuvid/CMakeLists.txt
+@@ -41,8 +41,7 @@ add_custom_command(
+     OUTPUT ${NVCUVID_GENERATED_STUB}
+     COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=Nvcuvid --
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../../../../internal_tools/stub_generator/nvcuvid.json" ${NVCUVID_GENERATED_STUB}
+-                "${CMAKE_CURRENT_SOURCE_DIR}/nvcuvid.h"
+-                ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES_DIRECTIVE}
++                "${CMAKE_CURRENT_SOURCE_DIR}/nvcuvid.h" "-I${CUDAToolkit_TARGET_DIR}/include"
+                 "-I${CMAKE_SOURCE_DIR}/include" "-I${CMAKE_SOURCE_DIR}"
+                 # for some reason QNX fails with 'too many errors emitted' is this is not set
+                 "-ferror-limit=0"
+diff --git a/dali/util/CMakeLists.txt b/dali/util/CMakeLists.txt
+index 9fbf85da..61ea8619 100644
+--- a/dali/util/CMakeLists.txt
++++ b/dali/util/CMakeLists.txt
+@@ -106,15 +106,14 @@ if(BUILD_NVML)
+         OUTPUT ${NVML_GENERATED_STUB}
+         COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=Nvml --
+                     "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/nvml.json" ${NVML_GENERATED_STUB}
+-                    "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/nvml.h"
+-                    ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES_DIRECTIVE}
++                    "${CUDAToolkit_TARGET_DIR}/include/nvml.h" "-I${CUDAToolkit_TARGET_DIR}/include"
+                     # for some reason QNX fails with 'too many errors emitted' is this is not set
+                     "-ferror-limit=0"
+                     # let clang know which architecutre we compile for
+                     "--target=${CMAKE_SYSTEM_PROCESSOR}-linux-gnu"
+                     ${DEFAULT_COMPILER_INCLUDE}
+         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py
+-                "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/nvml.h"
++                "${CUDAToolkit_TARGET_DIR}/include/nvml.h"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/nvml.json"
+         COMMENT "Running nvml.h stub generator"
+         VERBATIM)
+-- 
+2.51.0
+
