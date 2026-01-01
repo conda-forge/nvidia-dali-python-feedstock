@@ -43,7 +43,7 @@ requirements:
     - ${{ compiler('cuda') }}
     - ${{ compiler('cxx') }}
     - ${{ stdlib('c') }}
-    - if: linux and aarch64 and not match(cuda_compiler_version, "None")
+    - if: linux and aarch64 and not match(cuda_compiler_version, "==None")
       then:
         - arm-variant * ${{ arm_variant_type }}
     - cmake 3.*
