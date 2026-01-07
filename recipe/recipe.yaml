@@ -15,6 +15,7 @@ source:
       - patches/0004-BLD-Patch-nvcomp-search-path-and-dlopen-error-messag.patch
       - patches/0007-BLD-Remove-CUDA-arch-validation.patch
       - patches/0001-Add-USE_PREBUILD_PYBIND11-option-to-use-system-pybin.patch
+      - patches/0008-BLD-Dynamically-link-nvjpeg2k.patch
   - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
     sha256: 4dd3450bab2287d1c1b271cf4a1420db05294194f0ad9af4e3af592d6f2b4410
     target_directory: third_party/cocoapi
@@ -41,6 +42,8 @@ requirements:
       - if: (arm_variant_type or "") != "tegra"
         then:
           - libnvcomp-dev  ${{ libnvcomp }}
+      # Added libprotobuf to pick up channel pinnings, but we use the static package
+      - libprotobuf
   build:
     - ${{ compiler('cuda') }}
     - ${{ compiler('cxx') }}
@@ -58,6 +61,7 @@ requirements:
         - python
         - python-clang
         - libprotobuf
+        - libprotobuf-static
   host:
   # NOTE: static libraries culibos and nvjpeg required for correct feature detection
     - if: linux and match(cuda_compiler_version, "13.*")
@@ -87,6 +91,7 @@ requirements:
     - libnvimgcodec-dev  ${{ libnvimgcodec }}
     - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
     - libopencv
+    - libprotobuf
     - libprotobuf-static
     - libsndfile
     - libtar
