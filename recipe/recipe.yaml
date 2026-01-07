@@ -22,7 +22,7 @@ source:
     sha256: 1d157157828ce1c85d0a43a6de312ce168b3c5dc1223c6ad3f02e074c3806c15
     target_directory: third_party/ffts
 build:
-  number: 0
+  number: 1
   skip:
     - cuda_compiler_version == "None"
     - win
@@ -38,11 +38,16 @@ requirements:
       - libnpp-dev
       - libnvjpeg-dev
       - libnvimgcodec-dev  ${{ libnvimgcodec }}
-      - libnvcomp-dev  ${{ libnvcomp }}
+      - if: (arm_variant_type or "") != "tegra"
+        then:
+          - libnvcomp-dev  ${{ libnvcomp }}
   build:
     - ${{ compiler('cuda') }}
     - ${{ compiler('cxx') }}
     - ${{ stdlib('c') }}
+    - if: linux and aarch64 and not match(cuda_compiler_version, "==None")
+      then:
+        - arm-variant * ${{ arm_variant_type }}
     - cmake 3.*
     - file
     - ninja
@@ -52,6 +57,7 @@ requirements:
         - cross-python_${{ target_platform }}
         - python
         - python-clang
+        - libprotobuf
   host:
   # NOTE: static libraries culibos and nvjpeg required for correct feature detection
     - if: linux and match(cuda_compiler_version, "13.*")
@@ -75,7 +81,9 @@ requirements:
     - libabseil
     - libboost-headers  ${{ libboost_headers }}
     - libjpeg-turbo
-    - libnvcomp-dev  ${{ libnvcomp }}
+    - if: (arm_variant_type or "") != "tegra"
+      then:
+        - libnvcomp-dev  ${{ libnvcomp }}
     - libnvimgcodec-dev  ${{ libnvimgcodec }}
     - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
     - libopencv
@@ -123,7 +131,9 @@ requirements:
     #     - libnpp
     #     - libnvjpeg
     - libboost-headers  ${{ libboost_headers }}
-    - libnvcomp  ${{ libnvcomp }}
+    - if: (arm_variant_type or "") != "tegra"
+      then:
+        - libnvcomp  ${{ libnvcomp }}
     - libnvimgcodec ${{ libnvimgcodec }}
 tests:
   - requirements:
@@ -135,7 +145,9 @@ tests:
         - libnpp
         - libnvjpeg
         - libboost-headers
-        - libnvcomp
+        - if: (arm_variant_type or "") != "tegra"
+          then:
+            - libnvcomp
         - libnvimgcodec
     script:
       - pip check
