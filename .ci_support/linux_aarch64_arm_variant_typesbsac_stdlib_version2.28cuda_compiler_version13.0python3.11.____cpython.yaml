@@ -39,9 +39,9 @@ libboost_headers:
 libjpeg_turbo:
 - '3'
 libnvcomp:
-- 5.0.0.*
+- 5.1.0.*
 libnvimgcodec:
-- 0.6.*
+- 0.7.*
 libnvjpeg2k:
 - '>=0.8.0,<0.10.0'
 libopencv:
