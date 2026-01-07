@@ -38,7 +38,9 @@ requirements:
       - libnpp-dev
       - libnvjpeg-dev
       - libnvimgcodec-dev  ${{ libnvimgcodec }}
-      - libnvcomp-dev  ${{ libnvcomp }}
+      - if: (arm_variant_type or "") != "tegra"
+        then:
+          - libnvcomp-dev  ${{ libnvcomp }}
   build:
     - ${{ compiler('cuda') }}
     - ${{ compiler('cxx') }}
@@ -79,7 +81,9 @@ requirements:
     - libabseil
     - libboost-headers  ${{ libboost_headers }}
     - libjpeg-turbo
-    - libnvcomp-dev  ${{ libnvcomp }}
+    - if: (arm_variant_type or "") != "tegra"
+      then:
+        - libnvcomp-dev  ${{ libnvcomp }}
     - libnvimgcodec-dev  ${{ libnvimgcodec }}
     - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
     - libopencv
@@ -127,7 +131,9 @@ requirements:
     #     - libnpp
     #     - libnvjpeg
     - libboost-headers  ${{ libboost_headers }}
-    - libnvcomp  ${{ libnvcomp }}
+    - if: (arm_variant_type or "") != "tegra"
+      then:
+        - libnvcomp  ${{ libnvcomp }}
     - libnvimgcodec ${{ libnvimgcodec }}
 tests:
   - requirements:
@@ -139,7 +145,9 @@ tests:
         - libnpp
         - libnvjpeg
         - libboost-headers
-        - libnvcomp
+        - if: (arm_variant_type or "") != "tegra"
+          then:
+            - libnvcomp
         - libnvimgcodec
     script:
       - pip check
