@@ -1,13 +1,13 @@
 # TODO: Update package pinnings in conda_build_config for every release
 schema_version: 1
 context:
-  version: "1.52.0"
+  version: "1.53.0"
 package:
   name: nvidia-dali-python
   version: ${{ version }}
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: bcc7cf38aaaf260dfab82c56b7e1a0b7def7f738620c6f20b9c9c372ec038316
+    sha256: ed805616a86ab4942672608c18c504d03c948d055b5d0ce56e389b15f5879b3f
     patches:
       - patches/0003-BLD-Use-shared-libtar-instead-of-static.patch
       - patches/0002-DOC-Patch-dlopen-failure-message-and-dlopen-search-p.patch
