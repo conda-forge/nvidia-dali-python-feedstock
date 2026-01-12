@@ -1,13 +1,13 @@
 # TODO: Update package pinnings in conda_build_config for every release
 schema_version: 1
 context:
-  version: "1.52.0"
+  version: "1.53.0"
 package:
   name: nvidia-dali-python
   version: ${{ version }}
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: bcc7cf38aaaf260dfab82c56b7e1a0b7def7f738620c6f20b9c9c372ec038316
+    sha256: ed805616a86ab4942672608c18c504d03c948d055b5d0ce56e389b15f5879b3f
     patches:
       - patches/0003-BLD-Use-shared-libtar-instead-of-static.patch
       - patches/0002-DOC-Patch-dlopen-failure-message-and-dlopen-search-p.patch
@@ -15,6 +15,7 @@ source:
       - patches/0004-BLD-Patch-nvcomp-search-path-and-dlopen-error-messag.patch
       - patches/0007-BLD-Remove-CUDA-arch-validation.patch
       - patches/0001-Add-USE_PREBUILD_PYBIND11-option-to-use-system-pybin.patch
+      - patches/0008-BLD-Dynamically-link-nvjpeg2k.patch
   - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
     sha256: 4dd3450bab2287d1c1b271cf4a1420db05294194f0ad9af4e3af592d6f2b4410
     target_directory: third_party/cocoapi
@@ -38,11 +39,18 @@ requirements:
       - libnpp-dev
       - libnvjpeg-dev
       - libnvimgcodec-dev  ${{ libnvimgcodec }}
-      - libnvcomp-dev  ${{ libnvcomp }}
+      - if: (arm_variant_type or "") != "tegra"
+        then:
+          - libnvcomp-dev  ${{ libnvcomp }}
+      # Added libprotobuf to pick up channel pinnings, but we use the static package
+      - libprotobuf
   build:
     - ${{ compiler('cuda') }}
     - ${{ compiler('cxx') }}
     - ${{ stdlib('c') }}
+    - if: linux and aarch64 and not match(cuda_compiler_version, "==None")
+      then:
+        - arm-variant * ${{ arm_variant_type }}
     - cmake 3.*
     - file
     - ninja
@@ -52,6 +60,8 @@ requirements:
         - cross-python_${{ target_platform }}
         - python
         - python-clang
+        - libprotobuf
+        - libprotobuf-static
   host:
   # NOTE: static libraries culibos and nvjpeg required for correct feature detection
     - if: linux and match(cuda_compiler_version, "13.*")
@@ -75,10 +85,13 @@ requirements:
     - libabseil
     - libboost-headers  ${{ libboost_headers }}
     - libjpeg-turbo
-    - libnvcomp-dev  ${{ libnvcomp }}
+    - if: (arm_variant_type or "") != "tegra"
+      then:
+        - libnvcomp-dev  ${{ libnvcomp }}
     - libnvimgcodec-dev  ${{ libnvimgcodec }}
     - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
     - libopencv
+    - libprotobuf
     - libprotobuf-static
     - libsndfile
     - libtar
@@ -123,7 +136,9 @@ requirements:
     #     - libnpp
     #     - libnvjpeg
     - libboost-headers  ${{ libboost_headers }}
-    - libnvcomp  ${{ libnvcomp }}
+    - if: (arm_variant_type or "") != "tegra"
+      then:
+        - libnvcomp  ${{ libnvcomp }}
     - libnvimgcodec ${{ libnvimgcodec }}
 tests:
   - requirements:
@@ -135,7 +150,9 @@ tests:
         - libnpp
         - libnvjpeg
         - libboost-headers
-        - libnvcomp
+        - if: (arm_variant_type or "") != "tegra"
+          then:
+            - libnvcomp
         - libnvimgcodec
     script:
       - pip check

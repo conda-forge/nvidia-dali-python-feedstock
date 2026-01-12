@@ -51,7 +51,11 @@ DALI_LINKING_ARGS=(
 
 # Debug with fewer archs for shorter build times
 # export CUDAARCHS="50"
-export CUDAARCHS="all-major"
+if [[ "${arm_variant_type:-}" == "tegra" ]]; then
+  export CUDAARCHS="87-real;101f-real;101-virtual"
+else
+  export CUDAARCHS="all-major"
+fi
 
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
 # -DCUDA_TARGET_ARCHS="$CUDAARCHS" \
@@ -71,7 +75,7 @@ cmake ${CMAKE_ARGS} \
   -DBUILD_LIBTAR=ON \
   -DBUILD_LIBTIFF=ON \
   -DBUILD_LMDB=ON \
-  -DBUILD_NVCOMP=ON \
+  -DBUILD_NVCOMP=$( [[ "${arm_variant_type:-}" == "tegra" ]] && echo "OFF" || echo "ON" ) \
   -DBUILD_NVDEC=ON \
   -DBUILD_NVIMAGECODEC=ON \
   -DBUILD_NVJPEG=ON \
