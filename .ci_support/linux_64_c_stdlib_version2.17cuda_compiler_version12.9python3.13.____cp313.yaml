@@ -31,7 +31,7 @@ ffmpeg:
 gast:
 - '>=0.3.3,<=0.6.0'
 libabseil:
-- '20250512'
+- '20260107'
 libboost_headers:
 - 1.89.*
 libjpeg_turbo:
@@ -45,7 +45,7 @@ libnvjpeg2k:
 libopencv:
 - 4.12.0
 libprotobuf:
-- 6.31.1
+- 6.33.5
 libsndfile:
 - '1.2'
 libtiff:
