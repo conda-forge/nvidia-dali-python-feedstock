@@ -28,6 +28,10 @@ build:
     - cuda_compiler_version == "None"
     - win
     # - match(python, "!=3.12.*")
+  variant:
+    # ensure arm_variant_type gets detected as a used variable
+    use_keys:
+      - arm_variant_type
 requirements:
   ignore_run_exports:
     by_name:
