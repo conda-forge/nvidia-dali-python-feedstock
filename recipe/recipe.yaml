@@ -28,10 +28,6 @@ build:
     - cuda_compiler_version == "None"
     - win
     # - match(python, "!=3.12.*")
-  variant:
-    # ensure arm_variant_type gets detected as a used variable
-    use_keys:
-      - arm_variant_type
 requirements:
   ignore_run_exports:
     by_name:
@@ -43,7 +39,7 @@ requirements:
       - libnpp-dev
       - libnvjpeg-dev
       - libnvimgcodec-dev  ${{ libnvimgcodec }}
-      - if: (arm_variant_type or "") != "tegra"
+      - if: (arm_variant_type | default("")) != "tegra"
         then:
           - libnvcomp-dev  ${{ libnvcomp }}
       # Added libprotobuf to pick up channel pinnings, but we use the static package
@@ -54,7 +50,7 @@ requirements:
     - ${{ stdlib('c') }}
     - if: linux and aarch64 and not match(cuda_compiler_version, "==None")
       then:
-        - arm-variant * ${{ arm_variant_type }}
+        - arm-variant * ${{ arm_variant_type | default("None") }}
     - cmake 3.*
     - file
     - ninja
@@ -89,7 +85,7 @@ requirements:
     - libabseil
     - libboost-headers  ${{ libboost_headers }}
     - libjpeg-turbo
-    - if: (arm_variant_type or "") != "tegra"
+    - if: (arm_variant_type | default("")) != "tegra"
       then:
         - libnvcomp-dev  ${{ libnvcomp }}
     - libnvimgcodec-dev  ${{ libnvimgcodec }}
@@ -140,7 +136,7 @@ requirements:
     #     - libnpp
     #     - libnvjpeg
     - libboost-headers  ${{ libboost_headers }}
-    - if: (arm_variant_type or "") != "tegra"
+    - if: (arm_variant_type | default("")) != "tegra"
       then:
         - libnvcomp  ${{ libnvcomp }}
     - libnvimgcodec ${{ libnvimgcodec }}
@@ -154,7 +150,7 @@ tests:
         - libnpp
         - libnvjpeg
         - libboost-headers
-        - if: (arm_variant_type or "") != "tegra"
+        - if: (arm_variant_type | default("")) != "tegra"
           then:
             - libnvcomp
         - libnvimgcodec
