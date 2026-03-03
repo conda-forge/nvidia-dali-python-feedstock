@@ -3,7 +3,7 @@ arm_variant_type:
 astunparse:
 - '>=1.6.0,<=1.6.3'
 aws_sdk_cpp:
-- 1.11.606
+- 1.11.747
 black:
 - 25.*
 c_stdlib:
@@ -33,7 +33,7 @@ ffmpeg:
 gast:
 - '>=0.3.3,<=0.6.0'
 libabseil:
-- '20250512'
+- '20260107'
 libboost_headers:
 - 1.89.*
 libjpeg_turbo:
@@ -45,9 +45,9 @@ libnvimgcodec:
 libnvjpeg2k:
 - '>=0.8.0,<0.10.0'
 libopencv:
-- 4.12.0
+- 4.13.0
 libprotobuf:
-- 6.31.1
+- 6.33.5
 libsndfile:
 - '1.2'
 libtiff:
