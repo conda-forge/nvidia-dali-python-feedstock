@@ -1,7 +1,7 @@
-From 9d8054f6459f4b0385ae45c309418d33d394dc25 Mon Sep 17 00:00:00 2001
+From 7e353075cdba4037f279306f41d4796dfd0ac4c2 Mon Sep 17 00:00:00 2001
 From: Daniel Ching <dching@nvidia.com>
 Date: Mon, 28 Apr 2025 13:58:57 -0500
-Subject: [PATCH 1/4] BLD: Use CUDA target include directory to support
+Subject: [PATCH 1/5] BLD: Use CUDA target include directory to support
  cross-compiling
 
 ---
@@ -17,7 +17,7 @@ Subject: [PATCH 1/4] BLD: Use CUDA target include directory to support
  9 files changed, 20 insertions(+), 24 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 393275ac..9b956c99 100644
+index eeac5e6d..c3fba512 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -30,6 +30,8 @@ endif()
@@ -196,10 +196,10 @@ index f76f6e68..75b11b88 100644
                  # for some reason QNX fails with 'too many errors emitted' is this is not set
                  "-ferror-limit=0"
 diff --git a/dali/util/CMakeLists.txt b/dali/util/CMakeLists.txt
-index 9fbf85da..61ea8619 100644
+index 05ace1ec..1a4c80ec 100644
 --- a/dali/util/CMakeLists.txt
 +++ b/dali/util/CMakeLists.txt
-@@ -106,15 +106,14 @@ if(BUILD_NVML)
+@@ -103,15 +103,14 @@ if(BUILD_NVML)
          OUTPUT ${NVML_GENERATED_STUB}
          COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=Nvml --
                      "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/nvml.json" ${NVML_GENERATED_STUB}
@@ -218,5 +218,5 @@ index 9fbf85da..61ea8619 100644
          COMMENT "Running nvml.h stub generator"
          VERBATIM)
 -- 
-2.51.0
+2.53.0
 

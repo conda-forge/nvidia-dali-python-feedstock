@@ -1,24 +1,26 @@
-From e8ec3234cd1fbd7519ce8ad8c217494c8d52a260 Mon Sep 17 00:00:00 2001
+From 8454903e70d48719c67c0a61d531bb623ad401a2 Mon Sep 17 00:00:00 2001
 From: Daniel Ching <dching@nvidia.com>
 Date: Wed, 21 May 2025 13:31:05 -0500
-Subject: [PATCH 2/4] DOC: Patch dlopen failure message and dlopen search paths
+Subject: [PATCH 2/5] DOC: Patch dlopen failure message and dlopen search paths
 
 ---
  CMakeLists.txt                        |  2 +-
+ dali/core/CMakeLists.txt              |  5 ++---
  dali/core/dynlink_cufile.cc           |  2 +-
+ dali/core/dynlink_nvcomp.cc           |  2 +-
  dali/kernels/signal/fft/cufft_wrap.cc |  2 +-
  dali/npp/npp_wrap.cc                  |  6 +++---
  dali/nvimgcodec/nvimgcodec_wrap.cc    | 11 +++++------
  dali/nvjpeg/nvjpeg_wrap.cc            |  2 +-
  dali/operators/operators.cc           |  6 +++---
  dali/util/nvml_wrap.cc                |  2 +-
- 8 files changed, 16 insertions(+), 17 deletions(-)
+ 10 files changed, 19 insertions(+), 21 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 9b956c99..c508a298 100644
+index c3fba512..54d076cd 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -243,7 +243,7 @@ foreach(rpath IN ITEMS
+@@ -245,7 +245,7 @@ foreach(rpath IN ITEMS
    "$ORIGIN/../npp/lib"
    "$ORIGIN/../nvjpeg/lib"
    "$ORIGIN/../nvimgcodec"
@@ -27,6 +29,28 @@ index 9b956c99..c508a298 100644
    message(STATUS "Add to rpath: ${rpath}")
    list(APPEND CMAKE_BUILD_RPATH ${rpath})
    list(APPEND CMAKE_INSTALL_RPATH ${rpath})
+diff --git a/dali/core/CMakeLists.txt b/dali/core/CMakeLists.txt
+index 1aa32ba1..be6acbd7 100644
+--- a/dali/core/CMakeLists.txt
++++ b/dali/core/CMakeLists.txt
+@@ -102,15 +102,14 @@ if (BUILD_NVCOMP)
+       OUTPUT ${NVCOMP_GENERATED_STUB}
+       COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py --unique_prefix=nvComp --
+                   "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/nvcomp.json" ${NVCOMP_GENERATED_STUB}
+-                  "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/nvcomp/lz4.h"
+-                  ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES_DIRECTIVE}
++                  "${NVCOMP_ROOT_DIR}/include/nvcomp/lz4.h" "-I${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}"
+                   # for some reason QNX fails with 'too many errors emitted' is this is not set
+                   "-ferror-limit=0"
+                   # let clang know which architecutre we compile for
+                   "--target=${CMAKE_SYSTEM_PROCESSOR}-linux-gnu"
+                   ${DEFAULT_COMPILER_INCLUDE}
+       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/stub_codegen.py
+-              "${CUDA_TOOLKIT_INCLUDE_MAJOR_DIRECTORY}/nvcomp/lz4.h"
++              "${NVCOMP_ROOT_DIR}/include/nvcomp/lz4.h"
+               "${CMAKE_CURRENT_SOURCE_DIR}/../../internal_tools/stub_generator/nvcomp.json"
+       COMMENT "Running nvcomp/lz4.hstub generator"
+       VERBATIM)
 diff --git a/dali/core/dynlink_cufile.cc b/dali/core/dynlink_cufile.cc
 index 64bce978..825adc8a 100644
 --- a/dali/core/dynlink_cufile.cc
@@ -37,6 +61,19 @@ index 64bce978..825adc8a 100644
      if (!ret) {
 -      fprintf(stderr, "dlopen libcufile.so failed with error %s!. Please install libcufile.\n",
 +      fprintf(stderr, "dlopen libcufile.so failed with error %s!. Please install libcufile: `conda install -c conda-forge libcufile`.\n",
+               dlerror());
+     }
+   }
+diff --git a/dali/core/dynlink_nvcomp.cc b/dali/core/dynlink_nvcomp.cc
+index 616e187d..bf4fe575 100644
+--- a/dali/core/dynlink_nvcomp.cc
++++ b/dali/core/dynlink_nvcomp.cc
+@@ -35,7 +35,7 @@ NVCOMP loadNvCompFileLibrary() {
+     ret = dlopen(__nvCompfileLibName, RTLD_NOW);
+ 
+     if (!ret) {
+-      fprintf(stderr, "dlopen libnvcomp.so failed with error %s!. Please install libnvcomp.\n",
++      fprintf(stderr, "dlopen libnvcomp.so failed with error %s!. Please install libnvcomp: `conda install -c conda-forge libnvcomp`.\n",
                dlerror());
      }
    }
@@ -159,5 +196,5 @@ index b2cfe612..a8d95a4b 100644
    }
    return ret;
 -- 
-2.51.0
+2.53.0
 
