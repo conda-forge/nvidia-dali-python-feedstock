@@ -28,6 +28,11 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
         SHORT_CONFIG: linux_64_c_stdlib_version2.17cuda_compil_h88f978e6
+      linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.14.____cp314:
+        CONFIG: linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.14.____cp314
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_64_c_stdlib_version2.17cuda_compil_h1239d2b5
       linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.10.____cpython:
         CONFIG: linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.10.____cpython
         UPLOAD_PACKAGES: 'True'
@@ -48,6 +53,11 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
         SHORT_CONFIG: linux_64_c_stdlib_version2.28cuda_compil_h7b65d883
+      linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.14.____cp314:
+        CONFIG: linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.14.____cp314
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_64_c_stdlib_version2.28cuda_compil_h1fc9517a
       linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.10.____cpython:
         CONFIG: linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.10.____cpython
         UPLOAD_PACKAGES: 'True'
@@ -68,6 +78,11 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
         SHORT_CONFIG: linux_aarch64_arm_variant_typesbsac_stdl_h783e5c13
+      linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.14.____cp314:
+        CONFIG: linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.14.____cp314
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_aarch64_arm_variant_typesbsac_stdl_h0fc0f278
       linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.10.____cpython:
         CONFIG: linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.10.____cpython
         UPLOAD_PACKAGES: 'True'
@@ -88,6 +103,11 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
         SHORT_CONFIG: linux_aarch64_arm_variant_typesbsac_stdl_h20e06015
+      linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.14.____cp314:
+        CONFIG: linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.14.____cp314
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_aarch64_arm_variant_typesbsac_stdl_h492f4cc9
       linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.10.____cpython:
         CONFIG: linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.10.____cpython
         UPLOAD_PACKAGES: 'True'
@@ -108,6 +128,11 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
         SHORT_CONFIG: linux_aarch64_arm_variant_typetegrac_std_h2fe05f75
+      linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.14.____cp314:
+        CONFIG: linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.14.____cp314
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+        SHORT_CONFIG: linux_aarch64_arm_variant_typetegrac_std_h6b0b35ea
   timeoutInMinutes: 360
   variables: {}
 

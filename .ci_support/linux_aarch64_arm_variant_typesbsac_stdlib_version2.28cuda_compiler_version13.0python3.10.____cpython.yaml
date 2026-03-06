@@ -31,7 +31,7 @@ docker_image:
 ffmpeg:
 - '8'
 gast:
-- '>=0.3.3,<=0.6.0'
+- '>=0.3.3,<=0.7.0'
 libabseil:
 - '20260107'
 libboost_headers:
