@@ -1,0 +1,41 @@
+From 6dbe1c70246a4c01e63b6adf4b1d2d67d10b4f90 Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Thu, 5 Mar 2026 15:53:05 -0600
+Subject: [PATCH 5/5] BLD: Remove CUDA arch validation
+
+---
+ CMakeLists.txt | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 54d076cd..a16f5254 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -281,16 +281,6 @@ message(STATUS "CUDA .cu files compiler: ${USED_CUDA_COMPILER}")
+ CUDA_find_supported_arch_values(CUDA_supported_archs ${USED_CUDA_COMPILER} ${CUDA_known_archs})
+ message(STATUS "CUDA supported archs: ${CUDA_supported_archs}")
+ 
+-set(CUDA_TARGET_ARCHS_SORTED ${CUDA_TARGET_ARCHS})
+-list(SORT CUDA_TARGET_ARCHS_SORTED COMPARE NATURAL)
+-CUDA_find_supported_arch_values(CUDA_targeted_archs ${USED_CUDA_COMPILER} ${CUDA_TARGET_ARCHS_SORTED})
+-message(STATUS "CUDA targeted archs: ${CUDA_targeted_archs}")
+-if (NOT CUDA_targeted_archs)
+-  message(FATAL_ERROR "None of the provided CUDA architectures ({${CUDA_TARGET_ARCHS}})"
+-      " is supported by ${USED_CUDA_COMPILER}, use one or more of: ${CUDA_supported_archs}")
+-endif()
+-
+-
+ # Add gpu-arch and toolkit flags for clang when compiling cuda (if used)
+ if (DALI_CLANG_ONLY)
+   CUDA_get_gencode_args(CUDA_gencode_flags_clang ${USED_CUDA_COMPILER} ${CUDA_targeted_archs})
+@@ -302,7 +292,6 @@ if (DALI_CLANG_ONLY)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${CUDA_TOOLKIT_PATH_VAR}/include/cccl")
+ endif()
+ 
+-CUDA_get_cmake_cuda_archs(CMAKE_CUDA_ARCHITECTURES ${CUDA_targeted_archs})
+ message(STATUS "Generated CMAKE_CUDA_ARCHITECTURES: ${CMAKE_CUDA_ARCHITECTURES}")
+ 
+ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --compiler-options \"-fvisibility=hidden -Wno-free-nonheap-object\" --Wno-deprecated-gpu-targets -Xfatbin -compress-all")
+-- 
+2.53.0
+
