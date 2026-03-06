@@ -57,6 +57,12 @@ else
   export CUDAARCHS="all-major"
 fi
 
+# Compress SASS and PTX in the binary to reduce disk usage
+export CUDAFLAGS="${CUDAFLAGS} -Xfatbin -compress-all"
+if [[ "${cuda_compiler_version}" == 13.* ]]; then
+  export CUDAFLAGS="${CUDAFLAGS} -Xfatbin -compress-mode=size"
+fi
+
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
 # -DCUDA_TARGET_ARCHS="$CUDAARCHS" \
 cmake ${CMAKE_ARGS} \
