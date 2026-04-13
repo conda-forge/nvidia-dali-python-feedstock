@@ -97,7 +97,6 @@ requirements:
     - lmdb
     - nvtx-c
     - pip
-    - protobuf
     - pybind11
     - python
     - python-clang
