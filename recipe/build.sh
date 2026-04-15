@@ -107,6 +107,9 @@ cmake --build .
 cd dali/python
 ${PYTHON} -m pip install . -v
 
+# 2026.04.15 - Overwrite SP_DIR because conda-build doesn't yet add the `t` for freethreading 
+export SP_DIR=$PREFIX/lib/python`python -c "import sysconfig; print(sysconfig.get_config_var('LDVERSION'))"`/site-packages
+
 rm ${SP_DIR}/nvidia/dali/include/boost -rf
 rm ${PREFIX}/lib/gdk* -rf
 
