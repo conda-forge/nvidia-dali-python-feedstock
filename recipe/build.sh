@@ -5,6 +5,9 @@ set -ex
 # Our only staging output is core-build, so treat unset PKG_NAME as core-build.
 PKG_NAME="${PKG_NAME:-core-build}"
 
+# 2026.04.15 - Overwrite SP_DIR because conda-build doesn't yet add the `t` for freethreading
+export SP_DIR=$PREFIX/lib/python`python -c "import sysconfig; print(sysconfig.get_config_var('LDVERSION'))"`/site-packages
+
 case "${PKG_NAME}" in
     libdali|libdali-dev)
         # Install only — core-build already populated the build tree.
