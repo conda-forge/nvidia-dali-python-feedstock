@@ -2,8 +2,8 @@
 schema_version: 1
 context:
   version: "2.0.0"
-package:
-  name: nvidia-dali-python
+recipe:
+  name: nvidia-dali-python-split
   version: ${{ version }}
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v${{ version }}.tar.gz
@@ -22,143 +22,195 @@ source:
     sha256: 1d157157828ce1c85d0a43a6de312ce168b3c5dc1223c6ad3f02e074c3806c15
     target_directory: third_party/ffts
 
-build:
-  number: 0
-  skip:
-    - cuda_compiler_version == "None"
-    - win
-    # - match(python, "!=3.12.*")
-requirements:
-  ignore_run_exports:
-    by_name:
-      - cuda-version
-    from_package:
-      - libcufft-dev
-      - libcufile-dev
-      - libcurand-dev
-      - libnpp-dev
-      - libnvjpeg-dev
-      - libnvimgcodec-dev  ${{ libnvimgcodec }}
-      - if: (arm_variant_type | default("")) != "tegra"
-        then:
-          - libnvcomp-dev  ${{ libnvcomp }}
-      # Added libprotobuf to pick up channel pinnings, but we use the static package
-      - libprotobuf
-  build:
-    - ${{ compiler('cuda') }}
-    - ${{ compiler('cxx') }}
-    - ${{ stdlib('c') }}
-    - if: linux and aarch64 and not match(cuda_compiler_version, "==None")
-      then:
-        - arm-variant * ${{ arm_variant_type | default("None") }}
-    - cmake 3.*
-    - file
-    - ninja
-    - pkgconf
-    - if: build_platform != target_platform
-      then:
-        - cross-python_${{ target_platform }}
-        - python
-        - python-clang
+outputs:
+  - package:
+      name: nvidia-dali-python
+      version: ${{ version }}
+    build:
+      number: 0
+      script: build.sh
+      skip:
+        - cuda_compiler_version == "None"
+        - win
+        # - match(python, "!=3.12.*")
+    requirements:
+      ignore_run_exports:
+        by_name:
+          - cuda-version
+        from_package:
+          - libcufft-dev
+          - libcufile-dev
+          - libcurand-dev
+          - libnpp-dev
+          - libnvjpeg-dev
+          - libnvimgcodec-dev  ${{ libnvimgcodec }}
+          - if: (arm_variant_type | default("")) != "tegra"
+            then:
+              - libnvcomp-dev  ${{ libnvcomp }}
+          # Added libprotobuf to pick up channel pinnings, but we use the static package
+          - libprotobuf
+      build:
+        - ${{ compiler('cuda') }}
+        - ${{ compiler('cxx') }}
+        - ${{ stdlib('c') }}
+        - if: linux and aarch64 and not match(cuda_compiler_version, "==None")
+          then:
+            - arm-variant * ${{ arm_variant_type | default("None") }}
+        - cmake 3.*
+        - file
+        - ninja
+        - pkgconf
+        - if: build_platform != target_platform
+          then:
+            - cross-python_${{ target_platform }}
+            - python
+            - python-clang
+            - libprotobuf
+            - libprotobuf-static
+      host:
+      # NOTE: static libraries culibos and nvjpeg required for correct feature detection
+        - if: linux and match(cuda_compiler_version, "13.*")
+          then:
+            - cuda-culibos-static
+        - cuda-cudart-static
+        - cuda-nvml-dev
+        - libcufft-dev
+        - libcufile-dev
+        - libcurand-dev
+        - libnpp-dev
+        - libnvjpeg-dev
+        - libnvjpeg-static
+        - libcvcuda-dev
+        - cuda-version ${{ cuda_compiler_version }}.*
+        - aws-sdk-cpp
+        - cfitsio
+        - cutlass
+        - dlpack
+        - ffmpeg
+        - ffmpeg * lgpl*
+        - libabseil
+        - libboost-headers  ${{ libboost_headers }}
+        - libjpeg-turbo
+        - if: (arm_variant_type | default("")) != "tegra"
+          then:
+            - libnvcomp-dev  ${{ libnvcomp }}
+        - libnvimgcodec-dev  ${{ libnvimgcodec }}
+        - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
+        - libopencv
         - libprotobuf
         - libprotobuf-static
-  host:
-  # NOTE: static libraries culibos and nvjpeg required for correct feature detection
-    - if: linux and match(cuda_compiler_version, "13.*")
-      then:
-        - cuda-culibos-static
-    - cuda-cudart-static
-    - cuda-nvml-dev
-    - libcufft-dev
-    - libcufile-dev
-    - libcurand-dev
-    - libnpp-dev
-    - libnvjpeg-dev
-    - libnvjpeg-static
-    - libcvcuda-dev
-    - cuda-version ${{ cuda_compiler_version }}.*
-    - aws-sdk-cpp
-    - cfitsio
-    - cutlass
-    - dlpack
-    - ffmpeg
-    - ffmpeg * lgpl*
-    - libabseil
-    - libboost-headers  ${{ libboost_headers }}
-    - libjpeg-turbo
-    - if: (arm_variant_type | default("")) != "tegra"
-      then:
-        - libnvcomp-dev  ${{ libnvcomp }}
-    - libnvimgcodec-dev  ${{ libnvimgcodec }}
-    - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
-    - libopencv
-    - libprotobuf
-    - libprotobuf-static
-    - libsndfile
-    - libtar
-    - libtiff
-    - lmdb
-    - nvtx-c
-    - pip
-    - pybind11
-    - python
-    - python-clang
-    - rapidjson
-    - setuptools
-    - zlib
-    # Runtime deps from below, for stub generator
-    - nvtx
-    - makefun
-    - astunparse ${{ astunparse }}
-    - gast ${{ gast }}
-    - six ${{ six }}
-    - dm-tree ${{ dm_tree }}
-    - packaging ${{ packaging }}
-    # Stubs autoformat themselves
-    - black  ${{ black }}
-  run:
-    - python
-    - nvtx
-    - makefun
-    - astunparse ${{ astunparse }}
-    - gast ${{ gast }}
-    - six ${{ six }}
-    - dm-tree ${{ dm_tree }}
-    - packaging ${{ packaging }}
-    - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
-  run_constraints:
-    # These packages are dlopen'd and are already constrained by cuda-version
-    # FIXME: Consider a meta-package like "nvidia-dali-all" for convenience
-    # - if: match(cuda_compiler_version, "12.*")
-    #   then:
-    #     - libcufft
-    #     - libcufile
-    #     - libnpp
-    #     - libnvjpeg
-    - libboost-headers  ${{ libboost_headers }}
-    - if: (arm_variant_type | default("")) != "tegra"
-      then:
-        - libnvcomp  ${{ libnvcomp }}
-    - libnvimgcodec ${{ libnvimgcodec }}
-tests:
-  - requirements:
-      run:
+        - libsndfile
+        - libtar
+        - libtiff
+        - lmdb
+        - nvtx-c
         - pip
-        # Test that optional dependencies are co-installable
+        - pybind11
+        - python
+        - python-clang
+        - rapidjson
+        - setuptools
+        - zlib
+        # Runtime deps from below, for stub generator
+        - nvtx
+        - makefun
+        - astunparse ${{ astunparse }}
+        - gast ${{ gast }}
+        - six ${{ six }}
+        - dm-tree ${{ dm_tree }}
+        - packaging ${{ packaging }}
+        # Stubs autoformat themselves
+        - black  ${{ black }}
+      run:
+        - python
+        - nvtx
+        - makefun
+        - astunparse ${{ astunparse }}
+        - gast ${{ gast }}
+        - six ${{ six }}
+        - dm-tree ${{ dm_tree }}
+        - packaging ${{ packaging }}
+        - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
+      run_constraints:
+        # These packages are dlopen'd and are already constrained by cuda-version
+        # FIXME: Consider a meta-package like "nvidia-dali-all" for convenience
+        # - if: match(cuda_compiler_version, "12.*")
+        #   then:
+        #     - libcufft
+        #     - libcufile
+        #     - libnpp
+        #     - libnvjpeg
+        - libboost-headers  ${{ libboost_headers }}
+        - if: (arm_variant_type | default("")) != "tegra"
+          then:
+            - libnvcomp  ${{ libnvcomp }}
+        - libnvimgcodec ${{ libnvimgcodec }}
+    tests:
+      - requirements:
+          run:
+            - pip
+            # Test that optional dependencies are co-installable
+            - libcufft
+            - libcufile
+            - libnpp
+            - libnvjpeg
+            - libboost-headers
+            - if: (arm_variant_type | default("")) != "tegra"
+              then:
+                - libnvcomp
+            - libnvimgcodec
+        script:
+          - pip check
+          - python -c "import nvidia.dali"
+          - tfrecord2idx --help
+          - wds2idx --help
+
+  - package:
+      name: nvidia-dali-python-test
+      version: ${{ version }}
+    build:
+      number: 0
+      script: build-test.sh
+      skip:
+        - cuda_compiler_version == "None"
+        - win
+    requirements:
+      run:
+        - ${{ pin_subpackage('nvidia-dali-python', exact=True) }}
+        - python
+        # DALI dlopens these CUDA runtime libraries at test time
         - libcufft
         - libcufile
         - libnpp
         - libnvjpeg
-        - libboost-headers
+        - libnvjpeg2k
         - if: (arm_variant_type | default("")) != "tegra"
           then:
             - libnvcomp
         - libnvimgcodec
-    script:
-      - pip check
-      - python -c "import nvidia.dali"
-      - tfrecord2idx --help
-      - wds2idx --help
+        # Test dependencies
+        - nose
+        - nose2
+        - nose-timer
+        - numpy
+        - py-opencv
+        - pillow
+        - scipy
+        - librosa
+        - pynvml
+        - numba
+        - lz4
+        - psutil
+        - dill
+        - cloudpickle
+        - astropy
+        - av
+        - mypy
+        - git
+    tests:
+      - script:
+          - run-dali-tests --list-suites
+
 about:
   summary: A GPU-accelerated library for data loading and pre-processing to accelerate deep learning applications.
   description: |

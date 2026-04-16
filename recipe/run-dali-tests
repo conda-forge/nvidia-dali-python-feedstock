@@ -1,0 +1,171 @@
+#!/bin/bash
+# Entry point for running DALI Python integration tests from a conda package.
+# Installed by nvidia-dali-python-test to $PREFIX/bin/run-dali-tests.
+#
+# This script bypasses the upstream test_template_impl.sh pip management
+# (incompatible with conda) and directly sources test_body.sh files to
+# invoke the test functions.
+
+set -eo pipefail
+
+# --- Path resolution ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PREFIX="${CONDA_PREFIX:-$(dirname "$SCRIPT_DIR")}"
+DALI_TEST_ROOT="${PREFIX}/share/nvidia-dali-test"
+
+# --- Argument parsing ---
+SUITE="all"
+SETUP_DATA=0
+VERBOSE=0
+
+usage() {
+    echo "Usage: run-dali-tests [OPTIONS]"
+    echo ""
+    echo "Run DALI Python integration tests (TL0 self-tests)."
+    echo ""
+    echo "Options:"
+    echo "  --suite SUITE          Test suite to run (default: all)"
+    echo "  --dali-extra-path DIR  Path to DALI_extra test data"
+    echo "  --setup-data           Auto-clone DALI_extra to ~/.nvidia/dali_extra"
+    echo "  --list-suites          List available test suites and exit"
+    echo "  --verbose              Enable verbose output (set -x)"
+    echo "  --help                 Show this help and exit"
+}
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --suite)
+            SUITE="$2"; shift 2 ;;
+        --dali-extra-path)
+            export DALI_EXTRA_PATH="$2"; shift 2 ;;
+        --setup-data)
+            SETUP_DATA=1; shift ;;
+        --list-suites)
+            echo "Available test suites:"
+            echo "  all                  Run all TL0 Python self-tests"
+            echo "  core                 Core pipeline tests"
+            echo "  readers-decoders     Reader and decoder tests"
+            echo "  operators_1          Operator tests batch 1"
+            echo "  operators_2          Operator tests batch 2"
+            exit 0 ;;
+        --verbose)
+            VERBOSE=1; shift ;;
+        --help)
+            usage; exit 0 ;;
+        *)
+            echo "Unknown option: $1" >&2
+            usage >&2
+            exit 1 ;;
+    esac
+done
+
+if [ "${VERBOSE}" -eq 1 ]; then
+    set -x
+fi
+
+# Verify installation (after parsing so --list-suites/--help work standalone)
+if [ ! -d "${DALI_TEST_ROOT}/dali/test/python" ]; then
+    echo "ERROR: DALI test files not found at ${DALI_TEST_ROOT}" >&2
+    echo "Is nvidia-dali-python-test installed?" >&2
+    exit 1
+fi
+
+# --- Environment setup ---
+export PYTHONUNBUFFERED=1
+export PYTHONPATH="${DALI_TEST_ROOT}/qa:${DALI_TEST_ROOT}/dali/test/python${PYTHONPATH:+:$PYTHONPATH}"
+
+# Test runners (matching upstream test_template_impl.sh)
+python_test_runner="python -m nose_wrapper"
+python_test_args="--verbose --with-timer --timer-top-n 20 -s"
+python_invoke_test="${python_test_runner} ${python_test_args}"
+
+python_new_test_runner="python -m nose2"
+python_new_test_args="--verbose"
+python_new_invoke_test="${python_new_test_runner} ${python_new_test_args}"
+
+# Export for test_body.sh scripts
+export python_invoke_test python_new_invoke_test
+
+# --- DALI_extra test data ---
+DALI_EXTRA_VERSION=$(cat "${DALI_TEST_ROOT}/DALI_EXTRA_VERSION")
+
+if [ -z "${DALI_EXTRA_PATH}" ]; then
+    if [ "${SETUP_DATA}" -eq 1 ]; then
+        export DALI_EXTRA_PATH="${HOME}/.nvidia/dali_extra"
+        echo "Setting up DALI_extra test data at ${DALI_EXTRA_PATH}..."
+        if [ ! -d "${DALI_EXTRA_PATH}" ]; then
+            git clone https://github.com/NVIDIA/DALI_extra.git "${DALI_EXTRA_PATH}"
+        fi
+        pushd "${DALI_EXTRA_PATH}" > /dev/null
+        git fetch origin "${DALI_EXTRA_VERSION}"
+        git checkout "${DALI_EXTRA_VERSION}"
+        popd > /dev/null
+        echo "DALI_extra ready at ${DALI_EXTRA_PATH}"
+    else
+        echo "WARNING: DALI_EXTRA_PATH not set. Tests requiring external data may fail." >&2
+        echo "Use --setup-data to auto-download or --dali-extra-path DIR to provide it." >&2
+    fi
+else
+    if [ -d "${DALI_EXTRA_PATH}" ]; then
+        echo "Using DALI_extra at ${DALI_EXTRA_PATH}"
+    else
+        echo "WARNING: DALI_EXTRA_PATH=${DALI_EXTRA_PATH} does not exist." >&2
+    fi
+fi
+
+# --- Run tests ---
+cd "${DALI_TEST_ROOT}/dali/test/python"
+
+FAILED_SUITES=()
+
+run_suite() {
+    local suite_name="$1"
+    local body_dir="${DALI_TEST_ROOT}/qa/TL0_python-self-test-${suite_name}"
+
+    if [ ! -f "${body_dir}/test_body.sh" ]; then
+        echo "ERROR: test_body.sh not found for suite '${suite_name}'" >&2
+        FAILED_SUITES+=("${suite_name}")
+        return 0
+    fi
+
+    echo "=== Running suite: ${suite_name} ==="
+    local rv=0
+    # Disable exit-on-error so individual test failures don't stop the suite
+    # (mirrors upstream test_template_impl.sh which does set +e around test_body)
+    set +e
+    (
+        set +e
+        source "${body_dir}/test_body.sh"
+        test_no_fw
+    )
+    rv=$?
+    set -e
+    if [ "$rv" -ne 0 ]; then
+        echo "=== Suite ${suite_name} FAILED (exit ${rv}) ==="
+        FAILED_SUITES+=("${suite_name}")
+    else
+        echo "=== Suite ${suite_name} passed ==="
+    fi
+}
+
+case "$SUITE" in
+    all)
+        run_suite core
+        run_suite readers-decoders
+        run_suite operators_1
+        run_suite operators_2
+        ;;
+    core|readers-decoders|operators_1|operators_2)
+        run_suite "$SUITE"
+        ;;
+    *)
+        echo "ERROR: Unknown suite '${SUITE}'. Use --list-suites to see available suites." >&2
+        exit 1
+        ;;
+esac
+
+if [ "${#FAILED_SUITES[@]}" -gt 0 ]; then
+    echo "FAILED suites: ${FAILED_SUITES[*]}" >&2
+    exit 1
+fi
+echo "All tests passed."
