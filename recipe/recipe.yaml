@@ -189,11 +189,11 @@ outputs:
         - libcufile
         - libnpp
         - libnvjpeg
-        - libnvjpeg2k
+        - libnvjpeg2k0 ${{ libnvjpeg2k }}
         - if: (arm_variant_type | default("")) != "tegra"
           then:
-            - libnvcomp
-        - libnvimgcodec
+            - libnvcomp ${{ libnvcomp }}
+        - libnvimgcodec ${{ libnvimgcodec }}
         # Test dependencies
         - nose
         - nose2
