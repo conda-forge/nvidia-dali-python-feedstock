@@ -1,0 +1,26 @@
+From a9b672ff18864b9a7fde624b6b030535565881e2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Zientkiewicz?= <michalz@nvidia.com>
+Date: Tue, 14 Apr 2026 09:56:40 +0200
+Subject: [PATCH] Fix glob_to_regex for Python 3.14 (#6290)
+
+Signed-off-by: Michal Zientkiewicz <michalz@nvidia.com>
+---
+ dali/test/python/nose_utils.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dali/test/python/nose_utils.py b/dali/test/python/nose_utils.py
+index 19d4358e..059b82be 100644
+--- a/dali/test/python/nose_utils.py
++++ b/dali/test/python/nose_utils.py
+@@ -156,7 +156,7 @@ def glob_to_regex(glob):
+     # fnmatch adds special character to match the end of the string, so that when used
+     # with re.match it, by default, matches the whole string. Here, it's going to be used
+     # with re.search so it would be weird to enforce matching the suffix, but not the prefix.
+-    if pattern[-2:] == r"\Z":
++    if pattern[-2:].upper() == r"\Z":
+         pattern = pattern[:-2]
+     return pattern
+ 
+-- 
+2.53.0
+

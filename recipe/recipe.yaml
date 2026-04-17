@@ -15,6 +15,12 @@ source:
       - patches/0005-BLD-Remove-CUDA-arch-validation.patch
       - patches/0003-BLD-Use-shared-libtar-instead-of-static.patch
       - patches/0007-BLD-Use-pre-build-cvcuda-instead-of-submodule.patch
+      # TODO: Drop 0008 in the release after v2.1.0 — upstream fixed this in
+      # NVIDIA/DALI commit 581c8710 (PR #6296) on main, landing in v2.2.0.
+      - patches/0008-BLD-Handle-NVML-ERROR-NOT-SUPPORTED-gracefully-on-pa.patch
+      # TODO: Drop 0009 in the release after v2.1.0 — upstream fixed this in
+      # NVIDIA/DALI commit a9b672ff (PR #6290) on main, landing in v2.2.0.
+      - patches/0009-TST-Fix-glob_to_regex-for-Python-3.14.patch
   - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
     sha256: 4dd3450bab2287d1c1b271cf4a1420db05294194f0ad9af4e3af592d6f2b4410
     target_directory: third_party/cocoapi
