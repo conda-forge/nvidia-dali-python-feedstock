@@ -2,6 +2,7 @@
 schema_version: 1
 context:
   version: "2.0.0"
+  build_number: 0
 recipe:
   name: nvidia-dali-python-split
   version: ${{ version }}
@@ -33,7 +34,7 @@ outputs:
       name: nvidia-dali-python
       version: ${{ version }}
     build:
-      number: 0
+      number: ${{ build_number }}
       script: build.sh
       skip:
         - cuda_compiler_version == "None"
@@ -175,14 +176,15 @@ outputs:
       name: nvidia-dali-python-test
       version: ${{ version }}
     build:
-      number: 0
+      number: ${{ build_number }}
       script: build-test.sh
+      noarch: generic
       skip:
         - cuda_compiler_version == "None"
         - win
     requirements:
       run:
-        - ${{ pin_subpackage('nvidia-dali-python', exact=True) }}
+        - ${{ pin_subpackage('nvidia-dali-python', upper_bound='x.x.x') }}
         - python
         # DALI dlopens these CUDA runtime libraries at test time
         - libcufft
