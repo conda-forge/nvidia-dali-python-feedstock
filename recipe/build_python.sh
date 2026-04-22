@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-[[ ${target_platform} == "linux-64" ]] && targetsDir="targets/x86_64-linux"
+[[ ${target_platform} == "linux-64" ]]      && targetsDir="targets/x86_64-linux"
 [[ ${target_platform} == "linux-ppc64le" ]] && targetsDir="targets/ppc64le-linux"
 # https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html?highlight=tegra#cross-compilation
-[[ ${target_platform} == "linux-aarch64" && ${arm_variant_type:-"sbsa"} == "sbsa" ]] && targetsDir="targets/sbsa-linux"
-[[ ${target_platform} == "linux-aarch64" && ${arm_variant_type:-"sbsa"} == "tegra" ]] && targetsDir="targets/aarch64-linux"
+[[ ${target_platform} == "linux-aarch64" && ${arm_variant_type:-"sbsa"} == "sbsa" ]]   && targetsDir="targets/sbsa-linux"
+[[ ${target_platform} == "linux-aarch64" && ${arm_variant_type:-"sbsa"} == "tegra" ]]  && targetsDir="targets/aarch64-linux"
 
 if [ -z "${targetsDir+x}" ]; then
     echo "target_platform: ${target_platform} is unknown! targetsDir must be defined!" >&2
@@ -24,13 +24,14 @@ ln -sf $PREFIX/include/cutlass third_party/cutlass/include/
 
 export CXXFLAGS="$CXXFLAGS -isystem $PREFIX/include/opencv4"
 
-sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVCOMP@//g" dali/python/setup.py.in
-sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVIMGCODEC@//g" dali/python/setup.py.in
-sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVJPEG2K@//g" dali/python/setup.py.in
-sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVTIFF@//g" dali/python/setup.py.in
+# Remove pip-install-time requirements that conda manages separately
+sed -i "s/@DALI_INSTALL_REQUIRES_NVCOMP@//g"      dali/python/setup.py.in
+sed -i "s/@DALI_INSTALL_REQUIRES_NVIMGCODEC@//g"  dali/python/setup.py.in
+sed -i "s/@DALI_INSTALL_REQUIRES_NVJPEG2K@//g"    dali/python/setup.py.in
+sed -i "s/@DALI_INSTALL_REQUIRES_NVTIFF@//g"      dali/python/setup.py.in
 
-mkdir -p build
-cd build
+mkdir -p build_python
+cd build_python
 
 DALI_LINKING_ARGS=(
   -DLINK_DRIVER=OFF
@@ -68,6 +69,7 @@ fi
 cmake ${CMAKE_ARGS} \
   -GNinja \
   -DBUILD_PYTHON=ON \
+  -DPREBUILD_DALI_LIBS=ON \
   -DPYTHON_VERSIONS=${PY_VER} \
   -DBUILD_AWSSDK=ON \
   -DBUILD_BENCHMARK=OFF \
@@ -100,25 +102,31 @@ cmake ${CMAKE_ARGS} \
   "${DALI_LINKING_ARGS[@]}" \
   $SRC_DIR
 
-cmake --build .
-# FIXME: C-API is probably being shipped in python site-packages
-# cmake --install . --strip -v
+# Build the python bindings
+cmake --build . -t dali_python python_function_plugin copy_post_build_target dali_python_generate_stubs install_headers
 
 cd dali/python
 ${PYTHON} -m pip install . -v
 
-rm ${SP_DIR}/nvidia/dali/include/boost -rf
-rm ${PREFIX}/lib/gdk* -rf
+# Remove boost headers that leaked into site-packages and stray gdk libs
+rm -rf ${SP_DIR}/nvidia/dali/include/boost
+rm -rf ${PREFIX}/lib/gdk*
 
-# When cross-compiling, the python modules are named incorrectly, so we have to
-# fix the name.
+# When cross-compiling, Python extension modules are named for the build arch;
+# rename them to match the target arch.
 if [[ "$target_platform" != "$build_platform" ]]; then
-  for file in "${SP_DIR}"/nvidia/dali/*cpython-*-x86_64-linux-gnu.so; do
-    newname="${file/x86_64/aarch64}"
+  build_arch="${build_platform/linux-/}"
+  target_arch="${target_platform/linux-/}"
+  for file in "${SP_DIR}"/nvidia/dali/*cpython-*-"${build_arch}"-linux-gnu.so; do
+    [[ -e "$file" ]] || continue
+    newname="${file/${build_arch}/${target_arch}}"
     mv "$file" "$newname"
-    echo "Renamed: $file → $newname"
+    echo "Renamed: $file -> $newname"
   done
 fi
 
-# Just double checking that binaries target correct arch
-file ${SP_DIR}/nvidia/dali/*.so
+# Sanity-check that binaries target the correct architecture
+so_files=("${SP_DIR}"/nvidia/dali/*.so)
+if [[ ${#so_files[@]} -gt 0 && -e "${so_files[0]}" ]]; then
+    file "${so_files[@]}"
+fi
