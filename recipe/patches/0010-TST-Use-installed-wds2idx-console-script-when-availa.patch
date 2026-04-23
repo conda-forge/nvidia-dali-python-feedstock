@@ -1,0 +1,43 @@
+From f844d73ce4f2e076eedaf40d516ad8c1ace2cd33 Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Fri, 17 Apr 2026 18:02:33 -0500
+Subject: [PATCH] TST: Use installed wds2idx console script when available
+
+The conda package installs `wds2idx` as a console entry point at
+$PREFIX/bin/wds2idx, but `webdataset_base.py` hardcodes the source-tree
+relative path `../../../tools/wds2idx.py`. When the test files are
+installed outside the DALI source layout (as in conda-forge's
+nvidia-dali-python-test), that relative path can't be resolved, causing
+every webdataset and nvjpeg-cached test to fail with FileNotFoundError.
+
+Use shutil.which() to find the installed console script first, and fall
+back to the in-tree path so upstream's source-tree development workflow
+continues to work unchanged.
+---
+ dali/test/python/webdataset_base.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/dali/test/python/webdataset_base.py b/dali/test/python/webdataset_base.py
+index ca6b8492..536fd032 100644
+--- a/dali/test/python/webdataset_base.py
++++ b/dali/test/python/webdataset_base.py
+@@ -17,11 +17,15 @@ from nvidia.dali.fn import readers
+ from nose_utils import assert_equals
+ import tempfile
+ from subprocess import call
++from shutil import which
+ import os
+ import tarfile
+ 
+ test_batch_size = 4
+-wds2idx_script = "../../../tools/wds2idx.py"
++# Prefer the `wds2idx` console script installed with nvidia-dali-python (on PATH
++# in conda/pip installs). Fall back to the in-tree source path for upstream dev
++# workflows where the package isn't installed.
++wds2idx_script = which("wds2idx") or "../../../tools/wds2idx.py"
+ 
+ 
+ @pipeline_def()
+-- 
+2.53.0
+

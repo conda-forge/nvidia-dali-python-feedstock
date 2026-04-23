@@ -1,0 +1,36 @@
+From 1584a83009fb5745afba9b8c358eb0e3d339ce8c Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Fri, 17 Apr 2026 18:09:58 -0500
+Subject: [PATCH] TST: Handle pynvml str return from nvmlSystemGetDriverVersion
+
+pynvml >= 11.0.0 returns str from nvmlSystemGetDriverVersion() rather
+than bytes. Calling .decode("utf-8") on the new str return raises
+AttributeError, which is not caught by the surrounding
+`except ModuleNotFoundError`, so every test that flows through
+is_of_supported() (test_optical_flow, test_optical_flow_stateless)
+fails outright.
+
+Handle both return types with an isinstance check so the code works on
+old and new pynvml without depending on an upstream DALI fix.
+---
+ dali/test/python/test_utils.py | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/dali/test/python/test_utils.py b/dali/test/python/test_utils.py
+index 363d699c..4873ab21 100644
+--- a/dali/test/python/test_utils.py
++++ b/dali/test/python/test_utils.py
+@@ -1057,7 +1057,9 @@ def is_of_supported(device_id=0):
+         import pynvml
+ 
+         pynvml.nvmlInit()
+-        driver_version = pynvml.nvmlSystemGetDriverVersion().decode("utf-8")
++        raw = pynvml.nvmlSystemGetDriverVersion()
++        # Newer pynvml (>= 11.0.0) returns str directly; older returned bytes.
++        driver_version = raw.decode("utf-8") if isinstance(raw, bytes) else raw
+         driver_version_major = int(driver_version.split(".")[0])
+     except ModuleNotFoundError:
+         print("NVML not found")
+-- 
+2.53.0
+

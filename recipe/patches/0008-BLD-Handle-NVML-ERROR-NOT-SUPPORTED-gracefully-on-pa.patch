@@ -1,0 +1,293 @@
+From 581c8710e2ac53523bf3c2158b2f0ec3676221a9 Mon Sep 17 00:00:00 2001
+From: Janusz Lisiecki <39967756+JanuszL@users.noreply.github.com>
+Date: Thu, 16 Apr 2026 07:07:58 +0200
+Subject: [PATCH] Handle NVML_ERROR_NOT_SUPPORTED gracefully on partial-NVML
+ platforms (#6296)
+
+On platforms like WSL2, NVML initialises successfully but individual
+queries (e.g. nvmlDeviceGetCpuAffinityWithinScope) return
+NVML_ERROR_NOT_SUPPORTED. Previously this propagated as an unhandled
+exception.
+
+* Each affected call site now carries a static per-function
+  supported flag (std::atomic<bool>).
+* On the first NOT_SUPPORTED result the flag is cleared and a
+  one-time warning is emitted; subsequent calls to that function
+  return a safe default without touching NVML.
+* Unrelated NVML functions that work correctly are not affected.
+
+Signed-off-by: Janusz Lisiecki <jlisiecki@nvidia.com>
+---
+ dali/util/nvml.cc | 124 +++++++++++++++++++++++-----------------------
+ dali/util/nvml.h  |  82 ++++++++++++++++++++++++------
+ 2 files changed, 129 insertions(+), 77 deletions(-)
+
+diff --git a/dali/util/nvml.cc b/dali/util/nvml.cc
+index e10e53d5..b3d311da 100644
+--- a/dali/util/nvml.cc
++++ b/dali/util/nvml.cc
+@@ -15,6 +15,7 @@
+ #include "dali/util/nvml.h"
+ #include <pthread.h>
+ #include <sys/sysinfo.h>
++#include <atomic>
+ #include <vector>
+ 
+ namespace dali {
+@@ -23,27 +24,25 @@ namespace impl {
+ 
+ 
+ float GetDriverVersion() {
+-  if (!nvmlIsInitialized()) {
+-    return 0;
+-  }
+-
+-  float driver_version = 0;
+-  char version[NVML_SYSTEM_DRIVER_VERSION_BUFFER_SIZE];
+-
+-  CUDA_CALL(nvmlSystemGetDriverVersion(version, sizeof version));
+-  driver_version = std::stof(version);
+-  return driver_version;
++  static std::atomic<bool> supported{true};
++  return detail::NvmlCall(supported,
++      "nvmlSystemGetDriverVersion is not supported on this platform.",
++      0.0f, [&]() -> float {
++        char version[NVML_SYSTEM_DRIVER_VERSION_BUFFER_SIZE];
++        CUDA_CALL(nvmlSystemGetDriverVersion(version, sizeof version));
++        return std::stof(version);
++      });
+ }
+ 
+ int GetCudaDriverVersion() {
+-  if (!nvmlIsInitialized()) {
+-    return 0;
+-  }
+-
+-  int driver_version = 0;
+-
+-  CUDA_CALL(nvmlSystemGetCudaDriverVersion(&driver_version));
+-  return driver_version;
++  static std::atomic<bool> supported{true};
++  return detail::NvmlCall(supported,
++      "nvmlSystemGetCudaDriverVersion is not supported on this platform.",
++      0, [&]() -> int {
++        int driver_version = 0;
++        CUDA_CALL(nvmlSystemGetCudaDriverVersion(&driver_version));
++        return driver_version;
++      });
+ }
+ 
+ }  // namespace impl
+@@ -81,49 +80,52 @@ nvmlDevice_t nvmlGetDeviceHandleForCUDA(int cuda_idx) {
+ }
+ 
+ void GetNVMLAffinityMask(cpu_set_t *mask, size_t num_cpus) {
+-  if (!nvmlIsInitialized()) {
+-    return;
+-  }
+-  int device_idx;
+-  CUDA_CALL(cudaGetDevice(&device_idx));
+-
+-  // Get the ideal placement from NVML
+-  size_t cpu_set_size = (num_cpus + 63) / 64;
+-  std::vector<unsigned long> nvml_mask_container(cpu_set_size);  // NOLINT(runtime/int)
+-  auto * nvml_mask = nvml_mask_container.data();
+-  nvmlDevice_t device = nvmlGetDeviceHandleForCUDA(device_idx);
+-  #if (CUDART_VERSION >= 11000)
+-    if (nvmlHasCuda11NvmlFunctions()) {
+-      CUDA_CALL(nvmlDeviceGetCpuAffinityWithinScope(device, cpu_set_size, nvml_mask,
+-                                                        NVML_AFFINITY_SCOPE_SOCKET));
+-    } else {
+-      CUDA_CALL(nvmlDeviceGetCpuAffinity(device, cpu_set_size, nvml_mask));
+-    }
+-  #else
+-    CUDA_CALL(nvmlDeviceGetCpuAffinity(device, cpu_set_size, nvml_mask));
+-  #endif
+-
+-  // Convert it to cpu_set_t
+-  cpu_set_t nvml_set;
+-  CPU_ZERO(&nvml_set);
+-  const size_t n_bits = sizeof(unsigned long) * 8;  // NOLINT(runtime/int)
+-  for (size_t i = 0; i < num_cpus; ++i) {
+-    const size_t position = i % n_bits;
+-    const size_t index = i / n_bits;
+-    const unsigned long current_mask = 1ul << position;  // NOLINT(runtime/int)
+-    const bool cpu_is_set = (nvml_mask[index] & current_mask) != 0;
+-    if (cpu_is_set) {
+-        CPU_SET(i, &nvml_set);
+-    }
+-  }
+-
+-  // Get the current affinity mask
+-  cpu_set_t current_set;
+-  CPU_ZERO(&current_set);
+-  pthread_getaffinity_np(pthread_self(), sizeof(current_set), &current_set);
+-
+-  // AND masks
+-  CPU_AND(mask, &nvml_set, &current_set);
++  static std::atomic<bool> supported{true};
++  detail::NvmlCall(supported,
++      "nvmlDeviceGetCpuAffinityWithinScope/nvmlDeviceGetCpuAffinity is not supported"
++      " on this platform, skipping CPU affinity setting.",
++      [&]() {
++        int device_idx;
++        CUDA_CALL(cudaGetDevice(&device_idx));
++
++        // Get the ideal placement from NVML
++        size_t cpu_set_size = (num_cpus + 63) / 64;
++        std::vector<unsigned long> nvml_mask_container(cpu_set_size);  // NOLINT(runtime/int)
++        auto *nvml_mask = nvml_mask_container.data();
++        nvmlDevice_t device = nvmlGetDeviceHandleForCUDA(device_idx);
++        #if (CUDART_VERSION >= 11000)
++          if (nvmlHasCuda11NvmlFunctions()) {
++            CUDA_CALL(nvmlDeviceGetCpuAffinityWithinScope(device, cpu_set_size, nvml_mask,
++                                                              NVML_AFFINITY_SCOPE_SOCKET));
++          } else {
++            CUDA_CALL(nvmlDeviceGetCpuAffinity(device, cpu_set_size, nvml_mask));
++          }
++        #else
++          CUDA_CALL(nvmlDeviceGetCpuAffinity(device, cpu_set_size, nvml_mask));
++        #endif
++
++        // Convert it to cpu_set_t
++        cpu_set_t nvml_set;
++        CPU_ZERO(&nvml_set);
++        const size_t n_bits = sizeof(unsigned long) * 8;  // NOLINT(runtime/int)
++        for (size_t i = 0; i < num_cpus; ++i) {
++          const size_t position = i % n_bits;
++          const size_t index = i / n_bits;
++          const unsigned long current_mask = 1ul << position;  // NOLINT(runtime/int)
++          const bool cpu_is_set = (nvml_mask[index] & current_mask) != 0;
++          if (cpu_is_set) {
++            CPU_SET(i, &nvml_set);
++          }
++        }
++
++        // Get the current affinity mask
++        cpu_set_t current_set;
++        CPU_ZERO(&current_set);
++        pthread_getaffinity_np(pthread_self(), sizeof(current_set), &current_set);
++
++        // AND masks
++        CPU_AND(mask, &nvml_set, &current_set);
++      });
+ }
+ 
+ void SetCPUAffinity(int core) {
+diff --git a/dali/util/nvml.h b/dali/util/nvml.h
+index ed229b3c..cdc26c9d 100644
+--- a/dali/util/nvml.h
++++ b/dali/util/nvml.h
+@@ -17,6 +17,7 @@
+ 
+ #include <nvml.h>
+ #include <cuda_runtime_api.h>
++#include <atomic>
+ #include <mutex>
+ #include <string>
+ #include "dali/util/nvml_wrap.h"
+@@ -227,6 +228,49 @@ inline int GetCudaDriverVersion() {
+ }
+ 
+ 
++namespace detail {
++
++/**
++ * Calls fn(), gracefully handling NVML_ERROR_NOT_SUPPORTED.
++ * On the first NOT_SUPPORTED result the supported flag is cleared and a one-time warning
++ * is emitted; subsequent calls return default_val immediately without touching NVML.
++ */
++template <typename T, typename F>
++T NvmlCall(std::atomic<bool> &supported, const char *what, T default_val, F &&fn) {
++  if (!supported || !nvmlIsInitialized())
++    return default_val;
++  try {
++    return fn();
++  } catch (const NvmlError &e) {
++    if (e.result() == NVML_ERROR_NOT_SUPPORTED) {
++      if (supported.exchange(false))
++        DALI_WARN(what);
++      return default_val;
++    }
++    throw;
++  }
++}
++
++/** Void overload — same semantics, no return value. */
++template <typename F>
++void NvmlCall(std::atomic<bool> &supported, const char *what, F &&fn) {
++  if (!supported || !nvmlIsInitialized())
++    return;
++  try {
++    fn();
++  } catch (const NvmlError &e) {
++    if (e.result() == NVML_ERROR_NOT_SUPPORTED) {
++      if (supported.exchange(false))
++        DALI_WARN(what);
++      return;
++    }
++    throw;
++  }
++}
++
++}  // namespace detail
++
++
+ #if (CUDART_VERSION >= 11000)
+ 
+ /**
+@@ -259,13 +303,16 @@ inline DeviceProperties GetDeviceInfo(int device_idx) {
+  * @throws std::runtime_error
+  */
+ inline bool HasHwDecoder(int device_idx) {
+-  if (!nvmlIsInitialized()) {
+-    return false;
+-  }
+-  auto info = GetDeviceInfo(device_idx);
+-  return info.type == NVML_BRAND_TESLA &&
+-         (info.cap_major == 8 || info.cap_major == 9) &&
+-         info.cap_minor == 0;
++  static std::atomic<bool> supported{true};
++  return detail::NvmlCall(supported,
++      "nvmlDeviceGetBrand/nvmlDeviceGetCudaComputeCapability is not supported"
++      " on this platform, skipping HW decoder detection.",
++      false, [&]() -> bool {
++        auto info = GetDeviceInfo(device_idx);
++        return info.type == NVML_BRAND_TESLA &&
++               (info.cap_major == 8 || info.cap_major == 9) &&
++               info.cap_minor == 0;
++      });
+ }
+ 
+ /**
+@@ -274,15 +321,18 @@ inline bool HasHwDecoder(int device_idx) {
+  * @throws std::runtime_error
+  */
+ inline bool HasHwDecoder() {
+-  if (!nvmlIsInitialized()) {
+-    return false;
+-  }
+-  unsigned int device_count;
+-  CUDA_CALL(nvmlDeviceGetCount_v2(&device_count));
+-  for (unsigned int device_idx = 0; device_idx < device_count; device_idx++) {
+-    if (HasHwDecoder(device_idx)) return true;
+-  }
+-  return false;
++  static std::atomic<bool> supported{true};
++  return detail::NvmlCall(supported,
++      "nvmlDeviceGetCount_v2 is not supported on this platform,"
++      " skipping HW decoder detection.",
++      false, [&]() -> bool {
++        unsigned int device_count;
++        CUDA_CALL(nvmlDeviceGetCount_v2(&device_count));
++        for (unsigned int device_idx = 0; device_idx < device_count; device_idx++) {
++          if (HasHwDecoder(device_idx)) return true;
++        }
++        return false;
++      });
+ }
+ 
+ inline bool isHWDecoderSupported() {
+-- 
+2.53.0
+
