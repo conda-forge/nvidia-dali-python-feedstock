@@ -103,14 +103,20 @@ cmake ${CMAKE_ARGS} \
   $SRC_DIR
 
 # Build the python bindings
-cmake --build . -t dali_python python_function_plugin copy_post_build_target dali_python_generate_stubs install_headers
+if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" || "${CROSSCOMPILING_EMULATOR:-}" != "" ]]; then
+    echo "Building for the same platform, building dali_python_generate_stubs"
+    cmake --build . -t dali_python python_function_plugin copy_post_build_target dali_python_generate_stubs install_headers
+  else
+    echo "Cross-compiling, skipping dali_python_generate_stubs as it requires running the python interpreter and importing DALI"
+    cmake --build . -t dali_python python_function_plugin copy_post_build_target install_headers
+fi
 
 cd dali/python
-${PYTHON} -m pip install . -v
+${PYTHON} -m pip install .
 
-# Remove boost headers that leaked into site-packages and stray gdk libs
-rm -rf ${SP_DIR}/nvidia/dali/include/boost
-rm -rf ${PREFIX}/lib/gdk*
+# libdali owns the native headers; keep them out of the Python output.
+rm -rf "${SP_DIR}"/nvidia/dali/include
+rm -rf "${PREFIX}"/lib/gdk*
 
 # When cross-compiling, Python extension modules are named for the build arch;
 # rename them to match the target arch.

@@ -25,19 +25,17 @@ source:
 
 build:
   number: 1
+  skip:
+    - cuda_compiler_version == "None"
+    - win
+    - osx
 
 outputs:
   - package:
-      name: nvidia-dali-native
+      name: libdali
       version: ${{ version }}
     build:
-      number: 0
       script: build_native.sh
-      skip:
-        - cuda_compiler_version == "None"
-        - win
-        - osx
-        # - match(python, "!=3.12.*")
     requirements:
       ignore_run_exports:
         by_name:
@@ -124,6 +122,14 @@ outputs:
           then:
             - libnvcomp  ${{ libnvcomp }}
         - libnvimgcodec ${{ libnvimgcodec }}
+    tests:
+      - script:
+          - test -f "${PREFIX}/lib/libdali.so"
+          - test -f "${PREFIX}/lib/libdali_core.so"
+          - test -f "${PREFIX}/lib/libdali_kernels.so"
+          - test -f "${PREFIX}/lib/libdali_operators.so"
+          - test -f "${PREFIX}/include/dali/c_api.h"
+          - test -f "${PREFIX}/include/dali/core/common.h"
     about:
       summary: DALI native GPU-accelerated data loading libraries (CUDA runtime, Python-independent).
       description: |
@@ -139,16 +145,9 @@ outputs:
 
   - package:
       name: nvidia-dali-python
-
       version: ${{ version }}
     build:
-      number: 2
       script: build_python.sh
-      skip:
-        - cuda_compiler_version == "None"
-        - win
-        - osx
-        # - match(python, "!=3.12.*")
     requirements:
       ignore_run_exports:
         by_name:
@@ -165,6 +164,19 @@ outputs:
               - libnvcomp-dev
           # Added libprotobuf to pick up channel pinnings, but we use the static package
           - libprotobuf
+          # The Python extension links only against libdali*.so and system libs.
+          - aws-sdk-cpp
+          - cfitsio
+          - ffmpeg
+          - libabseil
+          - libjpeg-turbo
+          - libnvjpeg2k-dev
+          - libopencv
+          - libsndfile
+          - libtar
+          - libtiff
+          - lmdb
+          - zlib
       build:
         - ${{ compiler('cuda') }}
         - ${{ compiler('cxx') }}
@@ -184,7 +196,7 @@ outputs:
             - libprotobuf
             - libprotobuf-static
       host:
-        - ${{ pin_subpackage('nvidia-dali-native', upper_bound="x.x.x") }}
+        - ${{ pin_subpackage('libdali', upper_bound="x.x.x") }}
           # NOTE: static libraries culibos and nvjpeg required for correct feature detection
         - if: linux and match(cuda_compiler_version, "13.*")
           then:
@@ -238,7 +250,7 @@ outputs:
         # Stubs autoformat themselves
         - black  ${{ black }}
       run:
-        - ${{ pin_subpackage('nvidia-dali-native', upper_bound="x.x.x") }}
+        - ${{ pin_subpackage('libdali', upper_bound="x.x.x") }}
         - python
         - nvtx
         - makefun
@@ -265,6 +277,34 @@ outputs:
         script:
           - pip check
           - python -c "import nvidia.dali"
+          - |
+            python <<'PY'
+            import glob
+            import json
+            import os
+
+            metadata = glob.glob(os.path.join(os.environ["PREFIX"], "conda-meta", "nvidia-dali-python-*.json"))
+            if len(metadata) != 1:
+                raise SystemExit(f"Expected one nvidia-dali-python metadata file, found: {metadata}")
+            with open(metadata[0], encoding="utf-8") as fh:
+                files = set(json.load(fh)["files"])
+
+            native_libs = {
+                "lib/libdali.so",
+                "lib/libdali_core.so",
+                "lib/libdali_kernels.so",
+                "lib/libdali_operators.so",
+            }
+            unexpected = sorted(
+                path
+                for path in files
+                if path.startswith("include/dali/")
+                or path.startswith("lib/python") and "/site-packages/nvidia/dali/include/" in path
+                or path in native_libs
+            )
+            if unexpected:
+                raise SystemExit("nvidia-dali-python owns native files: " + ", ".join(unexpected[:20]))
+            PY
           - tfrecord2idx --help
           - wds2idx --help
     about:
