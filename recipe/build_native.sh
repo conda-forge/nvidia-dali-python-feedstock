@@ -1,11 +1,11 @@
 #!/bin/bash
-set -e
+set -ex
 
-[[ ${target_platform} == "linux-64" ]] && targetsDir="targets/x86_64-linux"
+[[ ${target_platform} == "linux-64" ]]      && targetsDir="targets/x86_64-linux"
 [[ ${target_platform} == "linux-ppc64le" ]] && targetsDir="targets/ppc64le-linux"
 # https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html?highlight=tegra#cross-compilation
-[[ ${target_platform} == "linux-aarch64" && ${arm_variant_type:-"sbsa"} == "sbsa" ]] && targetsDir="targets/sbsa-linux"
-[[ ${target_platform} == "linux-aarch64" && ${arm_variant_type:-"sbsa"} == "tegra" ]] && targetsDir="targets/aarch64-linux"
+[[ ${target_platform} == "linux-aarch64" && ${arm_variant_type:-"sbsa"} == "sbsa" ]]   && targetsDir="targets/sbsa-linux"
+[[ ${target_platform} == "linux-aarch64" && ${arm_variant_type:-"sbsa"} == "tegra" ]]  && targetsDir="targets/aarch64-linux"
 
 if [ -z "${targetsDir+x}" ]; then
     echo "target_platform: ${target_platform} is unknown! targetsDir must be defined!" >&2
@@ -24,13 +24,14 @@ ln -sf $PREFIX/include/cutlass third_party/cutlass/include/
 
 export CXXFLAGS="$CXXFLAGS -isystem $PREFIX/include/opencv4"
 
-sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVCOMP@//g" dali/python/setup.py.in
-sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVIMGCODEC@//g" dali/python/setup.py.in
-sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVJPEG2K@//g" dali/python/setup.py.in
-sed -i.bak "s/@DALI_INSTALL_REQUIRES_NVTIFF@//g" dali/python/setup.py.in
+# Remove pip-install-time requirements that conda manages separately
+sed -i "s/@DALI_INSTALL_REQUIRES_NVCOMP@//g"      dali/python/setup.py.in
+sed -i "s/@DALI_INSTALL_REQUIRES_NVIMGCODEC@//g"  dali/python/setup.py.in
+sed -i "s/@DALI_INSTALL_REQUIRES_NVJPEG2K@//g"    dali/python/setup.py.in
+sed -i "s/@DALI_INSTALL_REQUIRES_NVTIFF@//g"      dali/python/setup.py.in
 
-mkdir -p build
-cd build
+mkdir -p build_native
+cd build_native
 
 DALI_LINKING_ARGS=(
   -DLINK_DRIVER=OFF
@@ -57,18 +58,11 @@ else
   export CUDAARCHS="all-major"
 fi
 
-# Compress SASS and PTX in the binary to reduce disk usage
-export CUDAFLAGS="${CUDAFLAGS} -Xfatbin -compress-all"
-if [[ "${cuda_compiler_version}" == 13.* ]]; then
-  export CUDAFLAGS="${CUDAFLAGS} -Xfatbin -compress-mode=size"
-fi
-
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
 # -DCUDA_TARGET_ARCHS="$CUDAARCHS" \
 cmake ${CMAKE_ARGS} \
   -GNinja \
-  -DBUILD_PYTHON=ON \
-  -DPYTHON_VERSIONS=${PY_VER} \
+  -DBUILD_PYTHON=OFF \
   -DBUILD_AWSSDK=ON \
   -DBUILD_BENCHMARK=OFF \
   -DBUILD_CFITSIO=ON \
@@ -94,31 +88,23 @@ cmake ${CMAKE_ARGS} \
   -DBUILD_WITH_ASAN=OFF \
   -DBUILD_WITH_LSAN=OFF \
   -DBUILD_WITH_UBSAN=OFF \
-  -DUSE_PREBUILD_PYBIND11=ON \
   -DFFMPEG_ROOT_DIR=$PREFIX \
   -DNVCOMP_ROOT_DIR=$PREFIX \
   "${DALI_LINKING_ARGS[@]}" \
   $SRC_DIR
 
 cmake --build .
-# FIXME: C-API is probably being shipped in python site-packages
-# cmake --install . --strip -v
 
-cd dali/python
-${PYTHON} -m pip install . -v
+# Install native shared libs and headers to PREFIX so the Python bindings
+# build (PREBUILD_DALI_LIBS=ON) can locate them via standard cmake search paths.
+cmake --install . --strip --prefix $PREFIX
 
 rm ${SP_DIR}/nvidia/dali/include/boost -rf
 rm ${PREFIX}/lib/gdk* -rf
 
-# When cross-compiling, the python modules are named incorrectly, so we have to
-# fix the name.
-if [[ "$target_platform" != "$build_platform" ]]; then
-  for file in "${SP_DIR}"/nvidia/dali/*cpython-*-x86_64-linux-gnu.so; do
-    newname="${file/x86_64/aarch64}"
-    mv "$file" "$newname"
-    echo "Renamed: $file → $newname"
-  done
-fi
-
-# Just double checking that binaries target correct arch
-file ${SP_DIR}/nvidia/dali/*.so
+# Install generated protobuf headers needed by the Python bindings cmake pass.
+find . -name "*.pb.h" | sed 's|^\./||' | while IFS= read -r FILE; do
+    DEST="$PREFIX/include/$FILE"
+    mkdir -p "$(dirname "$DEST")"
+    cp "$FILE" "$DEST"
+done
