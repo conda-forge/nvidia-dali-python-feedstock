@@ -114,14 +114,11 @@ rm -rf "${PREFIX}"/lib/gdk*
 
 # When cross-compiling, Python extension modules are named for the build arch;
 # rename them to match the target arch.
-if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" || "${CROSSCOMPILING_EMULATOR:-}" != "" ]]; then
-  build_arch="${build_platform/linux-/}"
-  target_arch="${target_platform/linux-/}"
-  for file in "${SP_DIR}"/nvidia/dali/*cpython-*-"${build_arch}"-linux-gnu.so; do
-    [[ -e "$file" ]] || continue
-    newname="${file/${build_arch}/${target_arch}}"
+if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" == "1" && "${CROSSCOMPILING_EMULATOR:-}" == "" ]]; then
+  for file in "${SP_DIR}"/nvidia/dali/*cpython-*-x86_64-linux-gnu.so; do
+    newname="${file/x86_64/aarch64}"
     mv "$file" "$newname"
-    echo "Renamed: $file -> $newname"
+    echo "Renamed: $file → $newname"
   done
 fi
 
