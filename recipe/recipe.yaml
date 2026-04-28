@@ -14,7 +14,6 @@ source:
       - patches/0001-BLD-Use-CUDA-target-include-directory-to-support-cro.patch
       - patches/0004-BLD-Dynamically-link-nvjpeg2k.patch
       - patches/0002-DOC-Patch-dlopen-failure-message-and-dlopen-search-p.patch
-      - patches/0005-BLD-Remove-CUDA-arch-validation.patch
       - patches/0003-BLD-Use-shared-libtar-instead-of-static.patch
   - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
     sha256: 4dd3450bab2287d1c1b271cf4a1420db05294194f0ad9af4e3af592d6f2b4410

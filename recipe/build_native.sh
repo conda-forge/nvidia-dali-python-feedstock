@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 [[ ${target_platform} == "linux-64" ]]      && targetsDir="targets/x86_64-linux"
 [[ ${target_platform} == "linux-ppc64le" ]] && targetsDir="targets/ppc64le-linux"
@@ -56,12 +56,6 @@ if [[ "${arm_variant_type:-}" == "tegra" ]]; then
   export CUDAARCHS="87-real;101f-real;101-virtual"
 else
   export CUDAARCHS="all-major"
-fi
-
-# Compress SASS and PTX in the binary to reduce disk usage
-export CUDAFLAGS="${CUDAFLAGS} -Xfatbin -compress-all"
-if [[ "${cuda_compiler_version}" == 13.* ]]; then
-  export CUDAFLAGS="${CUDAFLAGS} -Xfatbin -compress-mode=size"
 fi
 
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters

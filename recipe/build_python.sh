@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 [[ ${target_platform} == "linux-64" ]]      && targetsDir="targets/x86_64-linux"
 [[ ${target_platform} == "linux-ppc64le" ]] && targetsDir="targets/ppc64le-linux"
@@ -58,12 +58,6 @@ else
   export CUDAARCHS="all-major"
 fi
 
-# Compress SASS and PTX in the binary to reduce disk usage
-export CUDAFLAGS="${CUDAFLAGS} -Xfatbin -compress-all"
-if [[ "${cuda_compiler_version}" == 13.* ]]; then
-  export CUDAFLAGS="${CUDAFLAGS} -Xfatbin -compress-mode=size"
-fi
-
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
 # -DCUDA_TARGET_ARCHS="$CUDAARCHS" \
 cmake ${CMAKE_ARGS} \
@@ -120,7 +114,7 @@ rm -rf "${PREFIX}"/lib/gdk*
 
 # When cross-compiling, Python extension modules are named for the build arch;
 # rename them to match the target arch.
-if [[ "$target_platform" != "$build_platform" ]]; then
+if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" || "${CROSSCOMPILING_EMULATOR:-}" != "" ]]; then
   build_arch="${build_platform/linux-/}"
   target_arch="${target_platform/linux-/}"
   for file in "${SP_DIR}"/nvidia/dali/*cpython-*-"${build_arch}"-linux-gnu.so; do
