@@ -1,13 +1,13 @@
 # TODO: Update package pinnings in conda_build_config for every release
 schema_version: 1
 context:
-  version: "2.0.0"
+  version: "2.1.0"
 package:
   name: nvidia-dali-python
   version: ${{ version }}
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: 6423d941cefc5c052ad0ea9dda8e58f84019a2e4de288a3d6b35e67d09479e79
+    sha256: c131146e16ba00dff19b09b323d02c038e1fed6d46da935e6158b23cc7fd9fc3
     patches:
       - patches/0001-BLD-Use-CUDA-target-include-directory-to-support-cro.patch
       - patches/0004-BLD-Dynamically-link-nvjpeg2k.patch
