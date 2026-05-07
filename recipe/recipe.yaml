@@ -30,11 +30,10 @@ build:
     - osx
 
 outputs:
-  - package:
-      name: libdali
-      version: ${{ version }}
+  - staging:
+      name: core-build
     build:
-      script: build_native.sh
+      script: build.sh
     requirements:
       ignore_run_exports:
         by_name:
@@ -105,6 +104,85 @@ outputs:
         - nvtx-c
         - rapidjson
         - zlib
+
+  - package:
+      name: libdali
+      version: ${{ version }}
+    inherit:
+      from: core-build
+      run_exports: true
+    build:
+      script: build.sh
+    requirements:
+      ignore_run_exports:
+        by_name:
+          - cuda-version
+        from_package:
+          - libcufft-dev
+          - libcufile-dev
+          - libcurand-dev
+          - libnpp-dev
+          - libnvjpeg-dev
+          - libnvimgcodec-dev
+          - if: (arm_variant_type | default("")) != "tegra"
+            then:
+              - libnvcomp-dev
+          # Added libprotobuf to pick up channel pinnings, but we use the static package
+          - libprotobuf
+      build:
+        - ${{ compiler('cuda') }}
+        - ${{ compiler('cxx') }}
+        - ${{ stdlib('c') }}
+        - if: linux and aarch64 and not match(cuda_compiler_version, "==None")
+          then:
+            - arm-variant * ${{ arm_variant_type | default("None") }}
+        - cmake 3.*
+        - file
+        - ninja
+        - pkgconf
+      #   - python-clang
+      #   - if: build_platform != target_platform
+      #     then:
+      #       - libprotobuf
+      #       - libprotobuf-static
+      host:
+      # # NOTE: static libraries culibos and nvjpeg required for correct feature detection
+      #   - if: linux and match(cuda_compiler_version, "13.*")
+      #     then:
+      #       - cuda-culibos-static
+      #   - cuda-cudart-static
+      #   - cuda-nvml-dev
+      #   - libcufft-dev
+      #   - libcufile-dev
+      #   - libcurand-dev
+      #   - libnpp-dev
+      #   - libnvjpeg-dev
+      #   - libnvjpeg-static
+        - cuda-version ${{ cuda_compiler_version }}.*
+      #   - aws-sdk-cpp
+      #   - cfitsio
+      #   - cutlass
+      #   - dlpack
+      #   - ffmpeg
+      #   - ffmpeg * lgpl*
+      #   - libabseil
+      #   - libboost-headers  ${{ libboost_headers }}
+      #   - libjpeg-turbo
+      #   - if: (arm_variant_type | default("")) != "tegra"
+      #     then:
+      #       - libnvcomp-dev  ${{ libnvcomp }}
+      #   - libnvimgcodec-dev  ${{ libnvimgcodec }}
+      #   - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
+      #   - libopencv
+      #   - libprotobuf
+      #   - libprotobuf-static
+      #   - libsndfile
+      #   - libtar
+      #   - libtiff
+      #   - lmdb
+      #   - nvtx-c
+      #   - rapidjson
+      #   - zlib
       run:
         - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
       run_constraints:
@@ -145,8 +223,11 @@ outputs:
   - package:
       name: nvidia-dali-python
       version: ${{ version }}
+    inherit:
+      from: core-build
+      run_exports: false
     build:
-      script: build_python.sh
+      script: build.sh
     requirements:
       ignore_run_exports:
         by_name:

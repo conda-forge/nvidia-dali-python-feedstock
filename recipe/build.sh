@@ -1,5 +1,30 @@
 #!/bin/bash
 set -ex
+# rattler-build leaves PKG_NAME unset for `staging:` outputs (no package to name).
+# Our only staging output is core-build, so treat unset PKG_NAME as core-build.
+PKG_NAME="${PKG_NAME:-core-build}"
+
+case "${PKG_NAME}" in
+    libdali)
+        # Install only — core-build already populated the build tree.
+        cd build
+        cmake --install . --strip --prefix "$PREFIX"
+        rm -rf "${SP_DIR}/nvidia/dali/include/boost"
+        rm -rf "${PREFIX}"/lib/gdk*
+        find . -name "*.pb.h" | sed 's|^\./||' | while IFS= read -r FILE; do
+            DEST="$PREFIX/include/$FILE"
+            mkdir -p "$(dirname "$DEST")"
+            cp "$FILE" "$DEST"
+        done
+        exit 0
+        ;;
+    core-build|nvidia-dali-python)
+        ;;
+    *)
+        echo "Unknown PKG_NAME: ${PKG_NAME}" >&2
+        exit 1
+        ;;
+esac
 
 [[ ${target_platform} == "linux-64" ]]      && targetsDir="targets/x86_64-linux"
 [[ ${target_platform} == "linux-ppc64le" ]] && targetsDir="targets/ppc64le-linux"
@@ -30,8 +55,8 @@ sed -i "s/@DALI_INSTALL_REQUIRES_NVIMGCODEC@//g"  dali/python/setup.py.in
 sed -i "s/@DALI_INSTALL_REQUIRES_NVJPEG2K@//g"    dali/python/setup.py.in
 sed -i "s/@DALI_INSTALL_REQUIRES_NVTIFF@//g"      dali/python/setup.py.in
 
-mkdir -p build_python
-cd build_python
+mkdir -p build
+cd build
 
 DALI_LINKING_ARGS=(
   -DLINK_DRIVER=OFF
@@ -50,18 +75,28 @@ DALI_LINKING_ARGS=(
   -DCUDAToolkit_TARGET_DIR="${PREFIX}/${targetsDir}"
 )
 
-if [[ "${arm_variant_type:-}" == "tegra" ]]; then
-  export CUDAARCHS="87;101f"
+if [[ "${PKG_NAME}" == "nvidia-dali-python" ]]; then
+    PYTHON_CMAKE_ARGS=(
+        -DBUILD_PYTHON=ON
+        -DPREBUILD_DALI_LIBS=ON
+        -DPYTHON_VERSIONS="${PY_VER}"
+        -DUSE_PREBUILD_PYBIND11=ON
+    )
 else
-  export CUDAARCHS=""
+    PYTHON_CMAKE_ARGS=(-DBUILD_PYTHON=OFF)
 fi
+
+# Debug with fewer archs for shorter build times
+export CUDAARCHS="89"
+# if [[ "${arm_variant_type:-}" == "tegra" ]]; then
+#   export CUDAARCHS="87-real;101f-real;101-virtual"
+# else
+#   export CUDAARCHS="all-major"
+# fi
 
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
 cmake ${CMAKE_ARGS} \
   -GNinja \
-  -DBUILD_PYTHON=ON \
-  -DPREBUILD_DALI_LIBS=ON \
-  -DPYTHON_VERSIONS=${PY_VER} \
   -DBUILD_AWSSDK=ON \
   -DBUILD_BENCHMARK=OFF \
   -DBUILD_CFITSIO=ON \
@@ -87,18 +122,23 @@ cmake ${CMAKE_ARGS} \
   -DBUILD_WITH_ASAN=OFF \
   -DBUILD_WITH_LSAN=OFF \
   -DBUILD_WITH_UBSAN=OFF \
-  -DUSE_PREBUILD_PYBIND11=ON \
   -DFFMPEG_ROOT_DIR=$PREFIX \
   -DNVCOMP_ROOT_DIR=$PREFIX \
   -DCUDA_TARGET_ARCHS=${CUDAARCHS} \
+  "${PYTHON_CMAKE_ARGS[@]}" \
   "${DALI_LINKING_ARGS[@]}" \
   $SRC_DIR
 
-# Build the python bindings
+if [[ "${PKG_NAME}" == "core-build" ]]; then
+    cmake --build .
+    exit 0
+fi
+
+# Python bindings only — third-party static libs reuse the cache from core-build.
 if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" || "${CROSSCOMPILING_EMULATOR:-}" != "" ]]; then
     echo "Building for the same platform, building dali_python_generate_stubs"
     cmake --build . -t dali_python python_function_plugin copy_post_build_target dali_python_generate_stubs install_headers
-  else
+else
     echo "Cross-compiling, skipping dali_python_generate_stubs as it requires running the python interpreter and importing DALI"
     cmake --build . -t dali_python python_function_plugin copy_post_build_target install_headers
 fi
@@ -108,16 +148,17 @@ ${PYTHON} -m pip install .
 
 # libdali owns the native headers; keep them out of the Python output.
 rm -rf "${SP_DIR}"/nvidia/dali/include
+rm -rf "${SP_DIR}"/nvidia/dali/libdali*.so
 rm -rf "${PREFIX}"/lib/gdk*
 
 # When cross-compiling, Python extension modules are named for the build arch;
 # rename them to match the target arch.
 if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" == "1" && "${CROSSCOMPILING_EMULATOR:-}" == "" ]]; then
-  for file in "${SP_DIR}"/nvidia/dali/*cpython-*-x86_64-linux-gnu.so; do
-    newname="${file/x86_64/aarch64}"
-    mv "$file" "$newname"
-    echo "Renamed: $file → $newname"
-  done
+    for file in "${SP_DIR}"/nvidia/dali/*cpython-*-x86_64-linux-gnu.so; do
+        newname="${file/x86_64/aarch64}"
+        mv "$file" "$newname"
+        echo "Renamed: $file -> $newname"
+    done
 fi
 
 # Sanity-check that binaries target the correct architecture
