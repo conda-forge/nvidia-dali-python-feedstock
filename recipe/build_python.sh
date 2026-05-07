@@ -50,16 +50,13 @@ DALI_LINKING_ARGS=(
   -DCUDAToolkit_TARGET_DIR="${PREFIX}/${targetsDir}"
 )
 
-# Debug with fewer archs for shorter build times
-# export CUDAARCHS="50"
 if [[ "${arm_variant_type:-}" == "tegra" ]]; then
-  export CUDAARCHS="87-real;101f-real;101-virtual"
+  export CUDAARCHS="87;101f"
 else
-  export CUDAARCHS="all-major"
+  export CUDAARCHS=""
 fi
 
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
-# -DCUDA_TARGET_ARCHS="$CUDAARCHS" \
 cmake ${CMAKE_ARGS} \
   -GNinja \
   -DBUILD_PYTHON=ON \
@@ -93,6 +90,7 @@ cmake ${CMAKE_ARGS} \
   -DUSE_PREBUILD_PYBIND11=ON \
   -DFFMPEG_ROOT_DIR=$PREFIX \
   -DNVCOMP_ROOT_DIR=$PREFIX \
+  -DCUDA_TARGET_ARCHS=${CUDAARCHS} \
   "${DALI_LINKING_ARGS[@]}" \
   $SRC_DIR
 
