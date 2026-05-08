@@ -98,7 +98,7 @@ fi
 
 # Debug with fewer archs for shorter build times
 if [[ "${arm_variant_type:-}" == "tegra" ]]; then
-  export CUDAARCHS="87"
+  export CUDAARCHS="87,101f"
 else
   export CUDAARCHS=""
 fi
