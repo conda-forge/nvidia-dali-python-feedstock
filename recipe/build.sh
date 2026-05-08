@@ -1,5 +1,10 @@
 #!/bin/bash
 set -ex
+
+export CMAKE_C_COMPILER_LAUNCHER=sccache
+export CMAKE_CXX_COMPILER_LAUNCHER=sccache
+export CMAKE_CUDA_COMPILER_LAUNCHER=sccache
+
 # rattler-build leaves PKG_NAME unset for `staging:` outputs (no package to name).
 # Our only staging output is core-build, so treat unset PKG_NAME as core-build.
 PKG_NAME="${PKG_NAME:-core-build}"
@@ -8,9 +13,15 @@ case "${PKG_NAME}" in
     libdali)
         # Install only — core-build already populated the build tree.
         cd build
+
+        # Install native shared libs and headers to PREFIX so the Python bindings
+        # build (PREBUILD_DALI_LIBS=ON) can locate them via standard cmake search paths.
         cmake --install . --strip --prefix "$PREFIX"
+
         rm -rf "${SP_DIR}/nvidia/dali/include/boost"
         rm -rf "${PREFIX}"/lib/gdk*
+
+        # Install generated protobuf headers needed by the Python bindings cmake pass.
         find . -name "*.pb.h" | sed 's|^\./||' | while IFS= read -r FILE; do
             DEST="$PREFIX/include/$FILE"
             mkdir -p "$(dirname "$DEST")"
