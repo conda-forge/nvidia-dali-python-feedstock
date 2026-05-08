@@ -10,7 +10,7 @@ export CMAKE_CUDA_COMPILER_LAUNCHER=sccache
 PKG_NAME="${PKG_NAME:-core-build}"
 
 case "${PKG_NAME}" in
-    libdali)
+    libdali|libdali-dev)
         # Install only — core-build already populated the build tree.
         cd build
 

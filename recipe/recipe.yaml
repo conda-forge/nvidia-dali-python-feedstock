@@ -98,6 +98,8 @@ outputs:
       run_exports: true
     build:
       script: build.sh
+      files:
+        - lib/libdali*.so
     requirements:
       ignore_run_exports:
         by_name:
@@ -149,13 +151,60 @@ outputs:
           - test -f "${PREFIX}/lib/libdali_core.so"
           - test -f "${PREFIX}/lib/libdali_kernels.so"
           - test -f "${PREFIX}/lib/libdali_operators.so"
-          - test -f "${PREFIX}/include/dali/c_api.h"
-          - test -f "${PREFIX}/include/dali/core/common.h"
+          # Negative check: headers live in libdali-dev now, not here.
+          - test ! -f "${PREFIX}/include/dali/c_api.h"
     about:
       summary: DALI native GPU-accelerated data loading libraries (CUDA runtime, Python-independent).
       description: |
         Native shared libraries for NVIDIA DALI. Contains the core GPU-accelerated
         processing engine. Install nvidia-dali-python for the Python API.
+      license: Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause
+      license_file:
+        - LICENSE
+        - COPYRIGHT
+        - Acknowledgements.txt  # Contains licenses for linked libraries
+        - third_party/README.rst
+      homepage: https://github.com/NVIDIA/dali
+
+  - package:
+      name: libdali-dev
+      version: ${{ version }}
+    inherit:
+      from: core-build
+      run_exports: false
+    build:
+      script: build.sh
+      files:
+        - include/dali/**
+    requirements:
+      build:
+        - ${{ compiler('cuda') }}
+        - ${{ compiler('cxx') }}
+        - ${{ stdlib('c') }}
+        - if: linux and aarch64 and not match(cuda_compiler_version, "==None")
+          then:
+            - arm-variant * ${{ arm_variant_type | default("None") }}
+        - cmake 3.*
+        - file
+        - ninja
+        - pkgconf
+      host:
+        - cuda-version ${{ cuda_compiler_version }}.*
+      run:
+        - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
+        - ${{ pin_subpackage('libdali', exact=True) }}
+      run_exports:
+        - ${{ pin_subpackage('libdali', upper_bound="x.x.x") }}
+    tests:
+      - script:
+          - test -f "${PREFIX}/include/dali/c_api.h"
+          - test -f "${PREFIX}/include/dali/core/common.h"
+          - test -f "${PREFIX}/include/dali/pipeline/dali.pb.h"
+    about:
+      summary: DALI development headers (C++ API).
+      description: |
+        Development headers for NVIDIA DALI. Required for building software
+        that links against libdali. Install libdali for the runtime libraries.
       license: Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause
       license_file:
         - LICENSE
@@ -202,7 +251,7 @@ outputs:
             - libprotobuf
             - libprotobuf-static
       host:
-        - ${{ pin_subpackage('libdali', upper_bound="x.x.x") }}
+        - ${{ pin_subpackage('libdali-dev', upper_bound="x.x.x") }}
           # NOTE: static libraries culibos and nvjpeg required for correct feature detection
         - if: linux and match(cuda_compiler_version, "13.*")
           then:
