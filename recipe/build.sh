@@ -1,10 +1,6 @@
 #!/bin/bash
 set -ex
 
-export CMAKE_C_COMPILER_LAUNCHER=sccache
-export CMAKE_CXX_COMPILER_LAUNCHER=sccache
-export CMAKE_CUDA_COMPILER_LAUNCHER=sccache
-
 # rattler-build leaves PKG_NAME unset for `staging:` outputs (no package to name).
 # Our only staging output is core-build, so treat unset PKG_NAME as core-build.
 PKG_NAME="${PKG_NAME:-core-build}"
@@ -98,12 +94,13 @@ else
 fi
 
 # Debug with fewer archs for shorter build times
-export CUDAARCHS="89"
-# if [[ "${arm_variant_type:-}" == "tegra" ]]; then
-#   export CUDAARCHS="87-real;101f-real;101-virtual"
-# else
+if [[ "${arm_variant_type:-}" == "tegra" ]]; then
+  export CUDAARCHS="87"
+#   export CUDAARCHS="87;101"
+else
+  export CUDAARCHS="89"
 #   export CUDAARCHS="all-major"
-# fi
+fi
 
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
 cmake ${CMAKE_ARGS} \
