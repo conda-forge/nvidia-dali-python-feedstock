@@ -99,10 +99,8 @@ fi
 # Debug with fewer archs for shorter build times
 if [[ "${arm_variant_type:-}" == "tegra" ]]; then
   export CUDAARCHS="87"
-#   export CUDAARCHS="87;101"
 else
-  export CUDAARCHS="89"
-#   export CUDAARCHS="all-major"
+  export CUDAARCHS=""
 fi
 
 # https://docs.nvidia.com/deeplearning/dali/user-guide/docs/compilation.html#optional-cmake-build-parameters
