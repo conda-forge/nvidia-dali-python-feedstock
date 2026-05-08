@@ -368,6 +368,7 @@ about:
   homepage: https://github.com/NVIDIA/dali
 
 extra:
+  feedstock-name: nvidia-dali-python
   recipe-maintainers:
     - conda-forge/cuda
     - isuruf
