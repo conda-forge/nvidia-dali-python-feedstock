@@ -16,6 +16,18 @@ Summary: DALI native GPU-accelerated data loading libraries (CUDA runtime, Pytho
 Native shared libraries for NVIDIA DALI. Contains the core GPU-accelerated
 processing engine. Install nvidia-dali-python for the Python API.
 
+About libdali-dev
+-----------------
+
+Home: https://github.com/NVIDIA/dali
+
+Package license: Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause
+
+Summary: DALI development headers (C++ API).
+
+Development headers for NVIDIA DALI. Required for building software
+that links against libdali. Install libdali for the runtime libraries.
+
 About nvidia-dali-python
 ------------------------
 
@@ -42,6 +54,7 @@ Current release info
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-libdali-green.svg)](https://anaconda.org/conda-forge/libdali) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libdali.svg)](https://anaconda.org/conda-forge/libdali) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libdali.svg)](https://anaconda.org/conda-forge/libdali) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libdali.svg)](https://anaconda.org/conda-forge/libdali) |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-libdali--dev-green.svg)](https://anaconda.org/conda-forge/libdali-dev) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libdali-dev.svg)](https://anaconda.org/conda-forge/libdali-dev) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libdali-dev.svg)](https://anaconda.org/conda-forge/libdali-dev) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libdali-dev.svg)](https://anaconda.org/conda-forge/libdali-dev) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-nvidia--dali--python-green.svg)](https://anaconda.org/conda-forge/nvidia-dali-python) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/nvidia-dali-python.svg)](https://anaconda.org/conda-forge/nvidia-dali-python) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/nvidia-dali-python.svg)](https://anaconda.org/conda-forge/nvidia-dali-python) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/nvidia-dali-python.svg)](https://anaconda.org/conda-forge/nvidia-dali-python) |
 
 Installing libdali
@@ -54,16 +67,16 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `libdali, nvidia-dali-python` can be installed with `conda`:
+Once the `conda-forge` channel has been enabled, `libdali, libdali-dev, nvidia-dali-python` can be installed with `conda`:
 
 ```
-conda install libdali nvidia-dali-python
+conda install libdali libdali-dev nvidia-dali-python
 ```
 
 or with `mamba`:
 
 ```
-mamba install libdali nvidia-dali-python
+mamba install libdali libdali-dev nvidia-dali-python
 ```
 
 It is possible to list all of the versions of `libdali` available on your platform with `conda`:

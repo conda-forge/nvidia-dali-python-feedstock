@@ -64,6 +64,7 @@ python:
 - 3.12.* *_cpython
 - 3.13.* *_cp313
 - 3.14.* *_cp314
+- 3.14.* *_cp314t
 six:
 - '>=1.16,<=1.17'
 target_platform:
