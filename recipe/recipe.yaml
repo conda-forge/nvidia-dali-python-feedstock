@@ -281,7 +281,7 @@ outputs:
         - astunparse ${{ astunparse }}
         - gast ${{ gast }}
         - six ${{ six }}
-        - dm-tree ${{ dm_tree }}
+        - optree
         - packaging ${{ packaging }}
         # Stubs autoformat themselves
         - black  ${{ black }}
@@ -293,7 +293,7 @@ outputs:
         - astunparse ${{ astunparse }}
         - gast ${{ gast }}
         - six ${{ six }}
-        - dm-tree ${{ dm_tree }}
+        - optree
         - packaging ${{ packaging }}
         - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
     tests:
