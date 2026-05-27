@@ -15,8 +15,6 @@ gast:
   - ">=0.3.3,<=0.7.0"
 six:
   - ">=1.16,<=1.17"
-dm_tree:
-  - "<=0.1.9"
 packaging:
   - "<=25.0"
 # https://github.com/NVIDIA/DALI/blob/v1.47.0/pyproject.toml

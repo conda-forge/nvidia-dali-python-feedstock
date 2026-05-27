@@ -3,6 +3,34 @@ About nvidia-dali-python-feedstock
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/nvidia-dali-python-feedstock/blob/main/LICENSE.txt)
 
+
+About nvidia-dali-python
+------------------------
+
+Home: https://github.com/NVIDIA/dali
+
+Package license: Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause
+
+Summary: DALI native GPU-accelerated data loading libraries (CUDA runtime, Python-independent).
+
+Native shared libraries for NVIDIA DALI. Contains the core GPU-accelerated
+processing engine. Install nvidia-dali-python for the Python API.
+
+About libdali-devel
+-------------------
+
+Home: https://github.com/NVIDIA/dali
+
+Package license: Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause
+
+Summary: DALI development headers (C++ API).
+
+Development headers for NVIDIA DALI. Required for building software
+that links against libdali. Install libdali for the runtime libraries.
+
+About nvidia-dali-python
+------------------------
+
 Home: https://github.com/NVIDIA/dali
 
 Package license: Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause
@@ -17,198 +45,12 @@ Current build status
 ====================
 
 
-<table>
-    
-  <tr>
-    <td>Azure</td>
+<table><tr>
+    <td>GitHub Actions</td>
     <td>
-      <details>
-        <summary>
-          <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-            <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main">
-          </a>
-        </summary>
-        <table>
-          <thead><tr><th>Variant</th><th>Status</th></tr></thead>
-          <tbody><tr>
-              <td>linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.10.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.10.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.11.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.11.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.12.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.12.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.13.____cp313</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.13.____cp313" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.14.____cp314</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.17cuda_compiler_version12.9python3.14.____cp314" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.10.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.10.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.11.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.11.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.12.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.12.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.13.____cp313</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.13.____cp313" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.14.____cp314</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.28cuda_compiler_version13.0python3.14.____cp314" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.10.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.10.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.11.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.11.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.12.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.12.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.13.____cp313</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.13.____cp313" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.14.____cp314</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9python3.14.____cp314" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.10.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.10.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.11.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.11.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.12.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.12.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.13.____cp313</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.13.____cp313" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.14.____cp314</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0python3.14.____cp314" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.10.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.10.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.11.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.11.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.12.____cpython</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.12.____cpython" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.13.____cp313</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.13.____cp313" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.14.____cp314</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23518&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/nvidia-dali-python-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9python3.14.____cp314" alt="variant">
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </details>
+      <a href="https://github.com/conda-forge/nvidia-dali-python-feedstock/actions/workflows/conda-build.yml">
+        <img src="https://github.com/conda-forge/nvidia-dali-python-feedstock/actions/workflows/conda-build.yml/badge.svg?event=push&branch=main">
+      </a>
     </td>
   </tr>
 </table>
@@ -218,6 +60,8 @@ Current release info
 
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-libdali-green.svg)](https://anaconda.org/conda-forge/libdali) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libdali.svg)](https://anaconda.org/conda-forge/libdali) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libdali.svg)](https://anaconda.org/conda-forge/libdali) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libdali.svg)](https://anaconda.org/conda-forge/libdali) |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-libdali--devel-green.svg)](https://anaconda.org/conda-forge/libdali-devel) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libdali-devel.svg)](https://anaconda.org/conda-forge/libdali-devel) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libdali-devel.svg)](https://anaconda.org/conda-forge/libdali-devel) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libdali-devel.svg)](https://anaconda.org/conda-forge/libdali-devel) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-nvidia--dali--python-green.svg)](https://anaconda.org/conda-forge/nvidia-dali-python) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/nvidia-dali-python.svg)](https://anaconda.org/conda-forge/nvidia-dali-python) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/nvidia-dali-python.svg)](https://anaconda.org/conda-forge/nvidia-dali-python) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/nvidia-dali-python.svg)](https://anaconda.org/conda-forge/nvidia-dali-python) |
 
 Installing nvidia-dali-python
@@ -230,41 +74,41 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `nvidia-dali-python` can be installed with `conda`:
+Once the `conda-forge` channel has been enabled, `libdali, libdali-devel, nvidia-dali-python` can be installed with `conda`:
 
 ```
-conda install nvidia-dali-python
-```
-
-or with `mamba`:
-
-```
-mamba install nvidia-dali-python
-```
-
-It is possible to list all of the versions of `nvidia-dali-python` available on your platform with `conda`:
-
-```
-conda search nvidia-dali-python --channel conda-forge
+conda install libdali libdali-devel nvidia-dali-python
 ```
 
 or with `mamba`:
 
 ```
-mamba search nvidia-dali-python --channel conda-forge
+mamba install libdali libdali-devel nvidia-dali-python
+```
+
+It is possible to list all of the versions of `libdali` available on your platform with `conda`:
+
+```
+conda search libdali --channel conda-forge
+```
+
+or with `mamba`:
+
+```
+mamba search libdali --channel conda-forge
 ```
 
 Alternatively, `mamba repoquery` may provide more information:
 
 ```
 # Search all versions available on your platform:
-mamba repoquery search nvidia-dali-python --channel conda-forge
+mamba repoquery search libdali --channel conda-forge
 
-# List packages depending on `nvidia-dali-python`:
-mamba repoquery whoneeds nvidia-dali-python --channel conda-forge
+# List packages depending on `libdali`:
+mamba repoquery whoneeds libdali --channel conda-forge
 
-# List dependencies of `nvidia-dali-python`:
-mamba repoquery depends nvidia-dali-python --channel conda-forge
+# List dependencies of `libdali`:
+mamba repoquery depends libdali --channel conda-forge
 ```
 
 
