@@ -151,7 +151,7 @@ outputs:
           - test -f "${PREFIX}/lib/libdali_core.so"
           - test -f "${PREFIX}/lib/libdali_kernels.so"
           - test -f "${PREFIX}/lib/libdali_operators.so"
-          # Negative check: headers live in libdali-dev now, not here.
+          # Negative check: headers live in libdali-devel now, not here.
           - test ! -f "${PREFIX}/include/dali/c_api.h"
     about:
       summary: DALI native GPU-accelerated data loading libraries (CUDA runtime, Python-independent).
@@ -167,7 +167,7 @@ outputs:
       homepage: https://github.com/NVIDIA/dali
 
   - package:
-      name: libdali-dev
+      name: libdali-devel
       version: ${{ version }}
     inherit:
       from: core-build
@@ -251,7 +251,7 @@ outputs:
             - libprotobuf
             - libprotobuf-static
       host:
-        - ${{ pin_subpackage('libdali-dev', upper_bound="x.x.x") }}
+        - ${{ pin_subpackage('libdali-devel', upper_bound="x.x.x") }}
           # NOTE: static libraries culibos and nvjpeg required for correct feature detection
         - if: linux and match(cuda_compiler_version, "13.*")
           then:
