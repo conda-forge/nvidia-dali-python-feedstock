@@ -9,7 +9,7 @@ PKG_NAME="${PKG_NAME:-core-build}"
 export SP_DIR=$PREFIX/lib/python`python -c "import sysconfig; print(sysconfig.get_config_var('LDVERSION'))"`/site-packages
 
 case "${PKG_NAME}" in
-    libdali|libdali-dev)
+    libdali|libdali-devel)
         # Install only — core-build already populated the build tree.
         cd build
 
