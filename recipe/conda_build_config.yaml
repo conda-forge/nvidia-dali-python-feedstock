@@ -7,7 +7,7 @@ libnvcomp:
   - "5.1.0.*"
 # https://github.com/NVIDIA/DALI/tree/main/third_party
 libboost_headers:
- - "1.89.*"
+ - "1.90"
 # https://github.com/NVIDIA/DALI/blob/main/dali/python/setup.py.in
 astunparse:
   - ">=1.6.0,<=1.6.3"
@@ -16,7 +16,7 @@ gast:
 six:
   - ">=1.16,<=1.17"
 packaging:
-  - "<=25.0"
+  - "<=26.0"
 # https://github.com/NVIDIA/DALI/blob/v1.47.0/pyproject.toml
 black:
-  - "25.*"
+  - "26.*"
