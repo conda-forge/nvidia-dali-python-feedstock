@@ -23,7 +23,7 @@ source:
     target_directory: third_party/ffts
 
 build:
-  number: 0
+  number: 1
   skip:
     - cuda_compiler_version == "None"
     - win
@@ -72,7 +72,7 @@ outputs:
         - ffmpeg
         - ffmpeg * lgpl*
         - libabseil
-        - libboost-headers  ${{ libboost_headers }}
+        - libboost-headers  ${{ libboost_headers }}.*
         - libjpeg-turbo
         - if: (arm_variant_type | default("")) != "tegra"
           then:
@@ -140,7 +140,7 @@ outputs:
         #     - libcufile
         #     - libnpp
         #     - libnvjpeg
-        - libboost-headers  ${{ libboost_headers }}
+        - libboost-headers  ${{ libboost_headers }}.*
         - if: (arm_variant_type | default("")) != "tegra"
           then:
             - libnvcomp  ${{ libnvcomp }}
@@ -263,7 +263,7 @@ outputs:
         - cuda-version ${{ cuda_compiler_version }}.*
         - cutlass
         - dlpack
-        - libboost-headers  ${{ libboost_headers }}
+        - libboost-headers  ${{ libboost_headers }}.*
         - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
         - libprotobuf
         - libprotobuf-static
