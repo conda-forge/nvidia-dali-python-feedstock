@@ -295,7 +295,6 @@ outputs:
         - gast ${{ gast }}
         - six ${{ six }}
         - optree
-        - numpy
         - packaging ${{ packaging }}
         - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
     tests:
