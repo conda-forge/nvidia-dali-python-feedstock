@@ -23,7 +23,7 @@ source:
     target_directory: third_party/ffts
 
 build:
-  number: 0
+  number: 1
   skip:
     - cuda_compiler_version == "None"
     - win
