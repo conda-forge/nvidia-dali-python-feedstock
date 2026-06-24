@@ -20,3 +20,8 @@ packaging:
 # https://github.com/NVIDIA/DALI/blob/v1.47.0/pyproject.toml
 black:
   - "26.*"
+# DALI uses only numpy Python API (no C ABI) - no runtime pinning needed
+numpy:
+  - "2"
+ignore_version:
+  - numpy

@@ -23,7 +23,7 @@ source:
     target_directory: third_party/ffts
 
 build:
-  number: 0
+  number: 1
   skip:
     - cuda_compiler_version == "None"
     - win
@@ -282,6 +282,7 @@ outputs:
         - gast ${{ gast }}
         - six ${{ six }}
         - optree
+        - numpy
         - packaging ${{ packaging }}
         # Stubs autoformat themselves
         - black  ${{ black }}
@@ -294,6 +295,7 @@ outputs:
         - gast ${{ gast }}
         - six ${{ six }}
         - optree
+        - numpy
         - packaging ${{ packaging }}
         - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
     tests:
