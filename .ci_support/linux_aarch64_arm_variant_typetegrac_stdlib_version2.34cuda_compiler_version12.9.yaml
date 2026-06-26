@@ -3,7 +3,7 @@ arm_variant_type:
 astunparse:
 - '>=1.6.0,<=1.6.3'
 aws_sdk_cpp:
-- 1.11.747
+- 1.11.833
 black:
 - 26.*
 c_stdlib:
@@ -52,6 +52,8 @@ libtiff:
 - '4.7'
 lmdb:
 - 0.9.29
+numpy:
+- '2'
 packaging:
 - <=26.0
 pin_run_as_build:

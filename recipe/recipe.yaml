@@ -23,7 +23,7 @@ source:
     target_directory: third_party/ffts
 
 build:
-  number: 0
+  number: 1
   skip:
     - cuda_compiler_version == "None"
     - win
@@ -64,6 +64,11 @@ outputs:
         - libnpp-dev
         - libnvjpeg-dev
         - libnvjpeg-static
+        - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
+        - if: (arm_variant_type | default("")) != "tegra"
+          then:
+            - libnvcomp-dev  ${{ libnvcomp }}
+        - libnvimgcodec-dev  ${{ libnvimgcodec }}
         - cuda-version ${{ cuda_compiler_version }}.*
         - aws-sdk-cpp
         - cfitsio
@@ -74,11 +79,6 @@ outputs:
         - libabseil
         - libboost-headers  ${{ libboost_headers }}.*
         - libjpeg-turbo
-        - if: (arm_variant_type | default("")) != "tegra"
-          then:
-            - libnvcomp-dev  ${{ libnvcomp }}
-        - libnvimgcodec-dev  ${{ libnvimgcodec }}
-        - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
         - libopencv
         - libprotobuf
         - libprotobuf-static
@@ -131,20 +131,12 @@ outputs:
         - cuda-version ${{ cuda_compiler_version }}.*
       run:
         - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
-      run_constraints:
-        # These packages are dlopen'd and are already constrained by cuda-version
-        # FIXME: Consider a meta-package like "nvidia-dali-all" for convenience
-        # - if: match(cuda_compiler_version, "12.*")
-        #   then:
-        #     - libcufft
-        #     - libcufile
-        #     - libnpp
-        #     - libnvjpeg
-        - libboost-headers  ${{ libboost_headers }}.*
+        - libnvimgcodec ${{ libnvimgcodec }}
         - if: (arm_variant_type | default("")) != "tegra"
           then:
             - libnvcomp  ${{ libnvcomp }}
-        - libnvimgcodec ${{ libnvimgcodec }}
+      run_constraints:
+        - libboost-headers  ${{ libboost_headers }}.*
     tests:
       - script:
           - test -f "${PREFIX}/lib/libdali.so"
@@ -232,6 +224,14 @@ outputs:
           # The Python extension links only against libdali*.so and system libs.
           - libnvjpeg2k-dev
           - zlib
+          - libcufft-dev
+          - libcufile-dev
+          - libcurand-dev
+          - libnpp-dev
+          - libnvimgcodec-dev
+          - if: (arm_variant_type | default("")) != "tegra"
+            then:
+              - libnvcomp-dev
       build:
         - ${{ compiler('cuda') }}
         - ${{ compiler('cxx') }}
@@ -261,10 +261,14 @@ outputs:
         - libnvjpeg-dev
         - libnvjpeg-static
         - cuda-version ${{ cuda_compiler_version }}.*
-        - cutlass
-        - dlpack
         - libboost-headers  ${{ libboost_headers }}.*
         - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
+        - if: (arm_variant_type | default("")) != "tegra"
+          then:
+            - libnvcomp-dev  ${{ libnvcomp }}
+        - libnvimgcodec-dev  ${{ libnvimgcodec }}
+        - cutlass
+        - dlpack
         - libprotobuf
         - libprotobuf-static
         - nvtx-c
@@ -282,6 +286,7 @@ outputs:
         - gast ${{ gast }}
         - six ${{ six }}
         - optree
+        - numpy
         - packaging ${{ packaging }}
         # Stubs autoformat themselves
         - black  ${{ black }}
