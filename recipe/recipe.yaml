@@ -81,7 +81,6 @@ outputs:
         - libprotobuf-static
         - libsndfile
         - libtar
-        - libtiff
         - lmdb
         - nvtx-c
         - rapidjson
@@ -107,6 +106,7 @@ outputs:
           - libcurand-dev
           - libnpp-dev
           - libnvimgcodec-dev
+          - cuda-cudart-dev
           - if: (arm_variant_type | default("")) != "tegra"
             then:
               - libnvcomp-dev
@@ -225,6 +225,7 @@ outputs:
           - libcurand-dev
           - libnpp-dev
           - libnvimgcodec-dev
+          - cuda-cudart-dev
           - if: (arm_variant_type | default("")) != "tegra"
             then:
               - libnvcomp-dev
