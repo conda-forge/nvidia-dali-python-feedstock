@@ -51,7 +51,7 @@ outputs:
             - libprotobuf
             - libprotobuf-static
       host:
-      # NOTE: static libraries culibos and nvjpeg required for correct feature detection
+      # NOTE: static libraries culibos required for correct feature detection
         - if: linux and match(cuda_compiler_version, "13.*")
           then:
             - cuda-culibos-static
@@ -61,9 +61,6 @@ outputs:
         - libcufile-dev
         - libcurand-dev
         - libnpp-dev
-        - libnvjpeg-dev
-        - libnvjpeg-static
-        - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
         - if: (arm_variant_type | default("")) != "tegra"
           then:
             - libnvcomp-dev  ${{ libnvcomp }}
@@ -108,7 +105,6 @@ outputs:
           - libcufile-dev
           - libcurand-dev
           - libnpp-dev
-          - libnvjpeg-dev
           - libnvimgcodec-dev
           - if: (arm_variant_type | default("")) != "tegra"
             then:
@@ -131,6 +127,9 @@ outputs:
       run:
         - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
         - libnvimgcodec ${{ libnvimgcodec }}
+        - libnvimgcodec-libjpeg-turbo-ext ${{ libnvimgcodec }}
+        - libnvimgcodec-libtiff-ext       ${{ libnvimgcodec }}
+        - libnvimgcodec-libopencv-ext     ${{ libnvimgcodec }}
         - if: (arm_variant_type | default("")) != "tegra"
           then:
             - libnvcomp  ${{ libnvcomp }}
@@ -217,11 +216,8 @@ outputs:
         by_name:
           - cuda-version
         from_package:
-          - libnvjpeg-dev
           # Added libprotobuf to pick up channel pinnings, but we use the static package
           - libprotobuf
-          # The Python extension links only against libdali*.so and system libs.
-          - libnvjpeg2k-dev
           - zlib
           - libcufft-dev
           - libcufile-dev
@@ -257,11 +253,8 @@ outputs:
             - cuda-culibos-static
         - cuda-cudart-static
         - cuda-nvml-dev
-        - libnvjpeg-dev
-        - libnvjpeg-static
         - cuda-version ${{ cuda_compiler_version }}.*
         - libboost-headers  ${{ libboost_headers }}.*
-        - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
         - if: (arm_variant_type | default("")) != "tegra"
           then:
             - libnvcomp-dev  ${{ libnvcomp }}
@@ -310,12 +303,14 @@ outputs:
             - libcufft
             - libcufile
             - libnpp
-            - libnvjpeg
             - libboost-headers
             - if: (arm_variant_type | default("")) != "tegra"
               then:
                 - libnvcomp
             - libnvimgcodec
+            - libnvimgcodec-libjpeg-turbo-ext
+            - libnvimgcodec-libtiff-ext
+            - libnvimgcodec-libopencv-ext
         script:
           - pip check
           - python -c "import nvidia.dali"

@@ -1,6 +1,3 @@
-# https://github.com/NVIDIA/DALI/blob/main/cmake/Dependencies.common.cmake#L279
-libnvjpeg2k:
-  - ">=0.8.0,<0.10.0"
 libnvimgcodec:
   - "0.8.*"
 libnvcomp:
