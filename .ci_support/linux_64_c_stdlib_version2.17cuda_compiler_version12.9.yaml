@@ -32,12 +32,14 @@ libabseil:
 - '20260526'
 libboost_headers:
 - '1.90'
+libcst:
+- '>=1.8,<2.0'
 libjpeg_turbo:
 - '3'
 libnvcomp:
-- 5.1.0.*
+- 5.2.0.*
 libnvimgcodec:
-- 0.7.*
+- 0.8.*
 libnvjpeg2k:
 - '>=0.8.0,<0.10.0'
 libopencv:
@@ -53,7 +55,7 @@ lmdb:
 numpy:
 - '2'
 packaging:
-- <=26.0
+- <=26.2
 pin_run_as_build:
   python:
     min_pin: x.x
