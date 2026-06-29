@@ -1,7 +1,7 @@
 # TODO: Update package pinnings in conda_build_config for every release
 schema_version: 1
 context:
-  version: "2.1.1"
+  version: "2.2.0"
 
 recipe:
   name: nvidia-dali
@@ -9,10 +9,9 @@ recipe:
 
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: 4959d1f7c92938a071e21f74ce11a46af6041ef5af0b398278c3c7fe133773c3
+    sha256: 2a3fda834ab0f767159996c3685f1981cc59ce6fd097483f8b23ff8fabe9331d
     patches:
       - patches/0001-BLD-Use-CUDA-target-include-directory-to-support-cro.patch
-      - patches/0004-BLD-Dynamically-link-nvjpeg2k.patch
       - patches/0002-DOC-Patch-dlopen-failure-message-and-dlopen-search-p.patch
       - patches/0003-BLD-Use-shared-libtar-instead-of-static.patch
   - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
@@ -23,7 +22,7 @@ source:
     target_directory: third_party/ffts
 
 build:
-  number: 2
+  number: 0
   skip:
     - cuda_compiler_version == "None"
     - win
@@ -286,6 +285,7 @@ outputs:
         - gast ${{ gast }}
         - six ${{ six }}
         - optree
+        - libcst ${{ libcst }}
         - numpy
         - packaging ${{ packaging }}
         # Stubs autoformat themselves
@@ -299,6 +299,7 @@ outputs:
         - gast ${{ gast }}
         - six ${{ six }}
         - optree
+        - libcst ${{ libcst }}
         - packaging ${{ packaging }}
         - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
     tests:
