@@ -55,6 +55,7 @@ outputs:
         - if: linux and match(cuda_compiler_version, "13.*")
           then:
             - cuda-culibos-static
+        - cuda-cudart-dev
         - cuda-cudart-static
         - cuda-nvml-dev
         - libcufft-dev
@@ -251,6 +252,7 @@ outputs:
         - if: linux and match(cuda_compiler_version, "13.*")
           then:
             - cuda-culibos-static
+        - cuda-cudart-dev
         - cuda-cudart-static
         - cuda-nvml-dev
         - cuda-version ${{ cuda_compiler_version }}.*
