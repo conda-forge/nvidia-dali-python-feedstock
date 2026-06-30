@@ -40,16 +40,12 @@ libnvcomp:
 - 5.2.0.*
 libnvimgcodec:
 - 0.8.*
-libnvjpeg2k:
-- '>=0.8.0,<0.10.0'
 libopencv:
 - 4.13.0
 libprotobuf:
 - 7.35.1
 libsndfile:
 - '1.2'
-libtiff:
-- '4.7'
 lmdb:
 - 0.9.29
 numpy:
