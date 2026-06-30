@@ -1,7 +1,7 @@
 # TODO: Update package pinnings in conda_build_config for every release
 schema_version: 1
 context:
-  version: "2.1.1"
+  version: "2.2.0"
 
 recipe:
   name: nvidia-dali
@@ -9,10 +9,9 @@ recipe:
 
 source:
   - url: https://github.com/NVIDIA/DALI/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: 4959d1f7c92938a071e21f74ce11a46af6041ef5af0b398278c3c7fe133773c3
+    sha256: 2a3fda834ab0f767159996c3685f1981cc59ce6fd097483f8b23ff8fabe9331d
     patches:
       - patches/0001-BLD-Use-CUDA-target-include-directory-to-support-cro.patch
-      - patches/0004-BLD-Dynamically-link-nvjpeg2k.patch
       - patches/0002-DOC-Patch-dlopen-failure-message-and-dlopen-search-p.patch
       - patches/0003-BLD-Use-shared-libtar-instead-of-static.patch
   - url: https://github.com/cocodataset/cocoapi/archive/8c9bcc3cf640524c4c20a9c40e89cb6a2f2fa0e9.tar.gz
@@ -23,7 +22,7 @@ source:
     target_directory: third_party/ffts
 
 build:
-  number: 2
+  number: 0
   skip:
     - cuda_compiler_version == "None"
     - win
@@ -52,19 +51,17 @@ outputs:
             - libprotobuf
             - libprotobuf-static
       host:
-      # NOTE: static libraries culibos and nvjpeg required for correct feature detection
+      # NOTE: static libraries culibos required for correct feature detection
         - if: linux and match(cuda_compiler_version, "13.*")
           then:
             - cuda-culibos-static
+        - cuda-cudart-dev
         - cuda-cudart-static
         - cuda-nvml-dev
         - libcufft-dev
         - libcufile-dev
         - libcurand-dev
         - libnpp-dev
-        - libnvjpeg-dev
-        - libnvjpeg-static
-        - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
         - if: (arm_variant_type | default("")) != "tegra"
           then:
             - libnvcomp-dev  ${{ libnvcomp }}
@@ -84,7 +81,6 @@ outputs:
         - libprotobuf-static
         - libsndfile
         - libtar
-        - libtiff
         - lmdb
         - nvtx-c
         - rapidjson
@@ -109,8 +105,8 @@ outputs:
           - libcufile-dev
           - libcurand-dev
           - libnpp-dev
-          - libnvjpeg-dev
           - libnvimgcodec-dev
+          - cuda-cudart-dev
           - if: (arm_variant_type | default("")) != "tegra"
             then:
               - libnvcomp-dev
@@ -132,6 +128,9 @@ outputs:
       run:
         - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
         - libnvimgcodec ${{ libnvimgcodec }}
+        - libnvimgcodec-libjpeg-turbo-ext ${{ libnvimgcodec }}
+        - libnvimgcodec-libtiff-ext       ${{ libnvimgcodec }}
+        - libnvimgcodec-libopencv-ext     ${{ libnvimgcodec }}
         - if: (arm_variant_type | default("")) != "tegra"
           then:
             - libnvcomp  ${{ libnvcomp }}
@@ -218,17 +217,15 @@ outputs:
         by_name:
           - cuda-version
         from_package:
-          - libnvjpeg-dev
           # Added libprotobuf to pick up channel pinnings, but we use the static package
           - libprotobuf
-          # The Python extension links only against libdali*.so and system libs.
-          - libnvjpeg2k-dev
           - zlib
           - libcufft-dev
           - libcufile-dev
           - libcurand-dev
           - libnpp-dev
           - libnvimgcodec-dev
+          - cuda-cudart-dev
           - if: (arm_variant_type | default("")) != "tegra"
             then:
               - libnvcomp-dev
@@ -256,13 +253,11 @@ outputs:
         - if: linux and match(cuda_compiler_version, "13.*")
           then:
             - cuda-culibos-static
+        - cuda-cudart-dev
         - cuda-cudart-static
         - cuda-nvml-dev
-        - libnvjpeg-dev
-        - libnvjpeg-static
         - cuda-version ${{ cuda_compiler_version }}.*
         - libboost-headers  ${{ libboost_headers }}.*
-        - libnvjpeg2k-dev  ${{ libnvjpeg2k }}
         - if: (arm_variant_type | default("")) != "tegra"
           then:
             - libnvcomp-dev  ${{ libnvcomp }}
@@ -286,6 +281,7 @@ outputs:
         - gast ${{ gast }}
         - six ${{ six }}
         - optree
+        - libcst ${{ libcst }}
         - numpy
         - packaging ${{ packaging }}
         # Stubs autoformat themselves
@@ -299,6 +295,7 @@ outputs:
         - gast ${{ gast }}
         - six ${{ six }}
         - optree
+        - libcst ${{ libcst }}
         - packaging ${{ packaging }}
         - ${{ pin_compatible('cuda-version', lower_bound='x', upper_bound='x') }}
     tests:
@@ -309,12 +306,14 @@ outputs:
             - libcufft
             - libcufile
             - libnpp
-            - libnvjpeg
             - libboost-headers
             - if: (arm_variant_type | default("")) != "tegra"
               then:
                 - libnvcomp
             - libnvimgcodec
+            - libnvimgcodec-libjpeg-turbo-ext
+            - libnvimgcodec-libtiff-ext
+            - libnvimgcodec-libopencv-ext
         script:
           - pip check
           - python -c "import nvidia.dali"

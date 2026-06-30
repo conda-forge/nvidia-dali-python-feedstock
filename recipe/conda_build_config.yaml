@@ -1,10 +1,7 @@
-# https://github.com/NVIDIA/DALI/blob/main/cmake/Dependencies.common.cmake#L279
-libnvjpeg2k:
-  - ">=0.8.0,<0.10.0"
 libnvimgcodec:
-  - "0.7.*"
+  - "0.8.*"
 libnvcomp:
-  - "5.1.0.*"
+  - "5.2.0.*"
 # https://github.com/NVIDIA/DALI/tree/main/third_party
 libboost_headers:
  - "1.90"
@@ -16,7 +13,9 @@ gast:
 six:
   - ">=1.16,<=1.17"
 packaging:
-  - "<=26.0"
+  - "<=26.2"
+libcst:
+  - ">=1.8,<2.0"
 # https://github.com/NVIDIA/DALI/blob/v1.47.0/pyproject.toml
 black:
   - "26.*"

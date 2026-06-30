@@ -11,10 +11,9 @@ Subject: [PATCH 2/5] DOC: Patch dlopen failure message and dlopen search paths
  dali/kernels/signal/fft/cufft_wrap.cc |  2 +-
  dali/npp/npp_wrap.cc                  |  6 +++---
  dali/nvimgcodec/nvimgcodec_wrap.cc    | 11 +++++------
- dali/nvjpeg/nvjpeg_wrap.cc            |  2 +-
  dali/operators/operators.cc           |  6 +++---
  dali/util/nvml_wrap.cc                |  2 +-
- 10 files changed, 18 insertions(+), 20 deletions(-)
+ 9 files changed, 18 insertions(+), 20 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index c3fba512..54d076cd 100644
@@ -132,31 +131,19 @@ index 1aa2785a..2b201f88 100644
  
  NVIMGCODECDRIVER loadNvimgcodecLibrary() {
    static const char *paths[] = {nvimgcodecLibNameFullVer,
-@@ -60,9 +60,8 @@ NVIMGCODECDRIVER loadNvimgcodecLibrary() {
+@@ -68,9 +68,8 @@ NVIMGCODECDRIVER loadNvimgcodecLibrary() {
    if (!ret) {
-     int cuda_version_major = CUDA_VERSION / 1000;  // 11020 -> 11, 12000 -> 12
-     throw std::runtime_error(
+     throw std::runtime_error(dali::make_string(
 -        "dlopen libnvimgcodec.so failed!. Please install nvimagecodec: See "
 -        "https://developer.nvidia.com/nvimgcodec-downloads or simply do `pip install "
--        "nvidia-nvimgcodec-cu" + std::to_string(cuda_version_major) + "`.");
-+        "dlopen libnvimgcodec.so failed!. Please install "
-+        "libnvimgcodec: `conda install -c conda-forge libnvimgcodec`.");
+-        "nvidia-nvimgcodec-cu", cuda_version_major, "`."
+-        "\nAttempted paths:", attempts));
++        "dlopen libnvimgcodec.so failed!. Please install libnvimgcodec: "
++        "`conda install -c conda-forge libnvimgcodec`."
++        "\nAttempted paths:", attempts));
    }
    return ret;
  }
-diff --git a/dali/nvjpeg/nvjpeg_wrap.cc b/dali/nvjpeg/nvjpeg_wrap.cc
-index 95e25e6d..d9f18aa6 100644
---- a/dali/nvjpeg/nvjpeg_wrap.cc
-+++ b/dali/nvjpeg/nvjpeg_wrap.cc
-@@ -44,7 +44,7 @@ NVJPEGDRIVER loadNvjpegLibrary() {
-     ret = dlopen(__NvjpegLibName, RTLD_NOW);
-     if (!ret) {
-       throw std::runtime_error("dlopen libnvjpeg.so failed!. Please install "
--                                "CUDA toolkit or nvJPEG python wheel.");
-+                                "libnvjpeg: `conda install -c conda-forge libnvjpeg`.");
-     }
-   }
-   return ret;
 diff --git a/dali/operators/operators.cc b/dali/operators/operators.cc
 index 742f9885..621a6787 100644
 --- a/dali/operators/operators.cc
