@@ -24,7 +24,7 @@ jobs:
         include:
           - CONFIG: linux_64_c_stdlib_version2.17cuda_compiler_version12.9
             CONFIG_SHORT: linux_64_c_stdlib_version2.17cuda_compil_hd7918865
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma10
             STORE_BUILD_ARTIFACTS: True
             UPLOAD_PACKAGES: True
             build_workspace_dir: build_artifacts
@@ -37,7 +37,7 @@ jobs:
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_64_c_stdlib_version2.28cuda_compiler_version13.0
             CONFIG_SHORT: linux_64_c_stdlib_version2.28cuda_compil_h282d3825
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma10
             STORE_BUILD_ARTIFACTS: True
             UPLOAD_PACKAGES: True
             build_workspace_dir: build_artifacts
@@ -50,7 +50,7 @@ jobs:
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_aarch64_arm_variant_typesbsac_stdlib_version2.17cuda_compiler_version12.9
             CONFIG_SHORT: linux_aarch64_arm_variant_typesbsac_stdl_h6a4a0357
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma10
             STORE_BUILD_ARTIFACTS: True
             UPLOAD_PACKAGES: True
             build_workspace_dir: build_artifacts
@@ -63,7 +63,7 @@ jobs:
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_aarch64_arm_variant_typesbsac_stdlib_version2.28cuda_compiler_version13.0
             CONFIG_SHORT: linux_aarch64_arm_variant_typesbsac_stdl_h1d8a58f0
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma10
             STORE_BUILD_ARTIFACTS: True
             UPLOAD_PACKAGES: True
             build_workspace_dir: build_artifacts
@@ -76,7 +76,7 @@ jobs:
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_aarch64_arm_variant_typetegrac_stdlib_version2.34cuda_compiler_version12.9
             CONFIG_SHORT: linux_aarch64_arm_variant_typetegrac_std_h645bfee9
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
+            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma10
             STORE_BUILD_ARTIFACTS: True
             UPLOAD_PACKAGES: True
             build_workspace_dir: build_artifacts
@@ -90,7 +90,7 @@ jobs:
     steps:
 
     - name: Checkout code
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
     - name: Manage disk space
       env:
@@ -127,7 +127,7 @@ jobs:
       run: |
         export CONDA_BLD_PATH="${CONDA_BLD_PATH/#~/${HOME}}"
         export FEEDSTOCK_NAME="$(basename $GITHUB_REPOSITORY)"
-        export GIT_BRANCH="$(basename $GITHUB_REF)"
+        export GIT_BRANCH="${GITHUB_REF_NAME}"
         export MINIFORGE_HOME="${MINIFORGE_HOME/#~/${HOME}}"
         export flow_run_id="github_$GITHUB_RUN_ID"
         export remote_url="https://github.com/$GITHUB_REPOSITORY"
@@ -157,7 +157,7 @@ jobs:
       run: |
         export CONDA_BLD_PATH="${CONDA_BLD_PATH/#~/${HOME}}"
         export FEEDSTOCK_NAME="$(basename $GITHUB_REPOSITORY)"
-        export GIT_BRANCH="$(basename $GITHUB_REF)"
+        export GIT_BRANCH="${GITHUB_REF_NAME}"
         export MINIFORGE_HOME="${MINIFORGE_HOME/#~/${HOME}}"
         export flow_run_id="github_$GITHUB_RUN_ID"
         export remote_url="https://github.com/$GITHUB_REPOSITORY"
@@ -179,6 +179,7 @@ jobs:
         set "sha=%GITHUB_SHA%"
         call ".scripts\run_win_build.bat"
       env:
+        BUILD_PLATFORM: ${{ matrix.build_platform }}
         CI: github_actions
         CONDA_BLD_PATH: ${{ matrix.build_workspace_dir }}
         CONFIG: ${{ matrix.CONFIG }}
