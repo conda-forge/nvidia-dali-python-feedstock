@@ -1,7 +1,10 @@
 libnvimgcodec:
-  - "0.8.*"
+  - "0.9.*"
 libnvcomp:
-  - "5.2.0.*"
+  - "5.3.0.*"
+# DALI 2.3.0 targets the CV-CUDA 0.16 API (0.17 changed nvcv handle construction).
+libcvcuda:
+  - "0.16.*"
 # https://github.com/NVIDIA/DALI/tree/main/third_party
 libboost_headers:
  - "1.90"

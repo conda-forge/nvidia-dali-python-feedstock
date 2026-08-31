@@ -36,12 +36,14 @@ libboost_headers:
 - '1.90'
 libcst:
 - '>=1.8,<2.0'
+libcvcuda:
+- 0.16.*
 libjpeg_turbo:
 - '3'
 libnvcomp:
-- 5.2.0.*
+- 5.3.0.*
 libnvimgcodec:
-- 0.8.*
+- 0.9.*
 libopencv:
 - 4.13.*
 libprotobuf:

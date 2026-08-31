@@ -70,6 +70,9 @@ cd build
 
 DALI_LINKING_ARGS=(
   -DLINK_DRIVER=OFF
+# Upstream conda-forge build adjustments: CUDA target include dir, shared libtar,
+# nvimgcodec `lib` (not `lib64`) rpath and conda-flavored dlopen diagnostics
+  -DBUILD_FOR_CONDA=ON
 # Continue to dlopen nvimgcodec so that it can be optionally installed
   -DWITH_DYNAMIC_NVIMGCODEC=ON
   -DNVIMGCODEC_DEFAULT_INSTALL_PATH=${PREFIX}
@@ -80,7 +83,6 @@ DALI_LINKING_ARGS=(
   -DWITH_DYNAMIC_NPP=ON
   -DWITH_DYNAMIC_NVCOMP=ON
   -DSTATIC_LIBS=OFF
-  # BLD: Use CUDA target include directory to support cross-compiling
   -DCUDAToolkit_TARGET_DIR="${PREFIX}/${targetsDir}"
 )
 
