@@ -2,12 +2,12 @@ libnvimgcodec:
   - "0.9.*"
 libnvcomp:
   - "5.3.0.*"
-# DALI 2.3.0 targets the CV-CUDA 0.16 API (0.17 changed nvcv handle construction).
+# DALI 2.4.0 targets the CV-CUDA 0.16 API (0.17 changed nvcv handle construction).
 libcvcuda:
   - "0.16.*"
 # https://github.com/NVIDIA/DALI/tree/main/third_party
 libboost_headers:
- - "1.90"
+ - "1.92"
 # https://github.com/NVIDIA/DALI/blob/main/dali/python/setup.py.in
 astunparse:
   - ">=1.6.0,<=1.6.3"
@@ -16,10 +16,10 @@ gast:
 six:
   - ">=1.16,<=1.17"
 packaging:
-  - "<=26.2"
+  - "<=26.3"
 libcst:
   - ">=1.8,<2.0"
-# https://github.com/NVIDIA/DALI/blob/v1.47.0/pyproject.toml
+# https://github.com/NVIDIA/DALI/blob/v2.4.0/pyproject.toml
 black:
   - "26.*"
 # DALI uses only numpy Python API (no C ABI) - no runtime pinning needed
