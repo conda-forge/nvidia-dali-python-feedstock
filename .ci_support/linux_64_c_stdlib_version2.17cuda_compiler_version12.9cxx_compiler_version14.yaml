@@ -1,3 +1,5 @@
+DOCKER_PLATFORM:
+- linux/amd64
 astunparse:
 - '>=1.6.0,<=1.6.3'
 aws_sdk_cpp:
@@ -31,7 +33,7 @@ gast:
 libabseil:
 - '20260526'
 libboost_headers:
-- '1.90'
+- '1.92'
 libcst:
 - '>=1.8,<2.0'
 libcvcuda:
@@ -53,13 +55,12 @@ lmdb:
 numpy:
 - '2'
 packaging:
-- <=26.2
+- <=26.3
 pin_run_as_build:
   python:
     min_pin: x.x
     max_pin: x.x
 python:
-- 3.10.* *_cpython
 - 3.11.* *_cpython
 - 3.12.* *_cpython
 - 3.13.* *_cp313
