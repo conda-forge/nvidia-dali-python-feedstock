@@ -48,19 +48,14 @@ if [ -z "${targetsDir+x}" ]; then
 fi
 
 mkdir -p third_party/boost/preprocessor/include
-rm -rf third_party/boost/preprocessor/include/boost
 ln -sf $PREFIX/include/boost third_party/boost/preprocessor/include/
 
 mkdir -p third_party/dlpack/include/
-rm -rf third_party/dlpack/include/dlpack
 ln -sf $PREFIX/include/dlpack third_party/dlpack/include/
 
 mkdir -p third_party/cutlass/include/
-rm -rf third_party/cutlass/include/cute
 ln -sf $PREFIX/include/cute    third_party/cutlass/include/
-rm -rf third_party/cutlass/include/cutlass
 ln -sf $PREFIX/include/cutlass third_party/cutlass/include/
-rm -rf third_party/cvcuda
 
 export CXXFLAGS="$CXXFLAGS -isystem $PREFIX/include/opencv4"
 
