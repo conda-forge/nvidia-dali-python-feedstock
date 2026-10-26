@@ -3,7 +3,7 @@ DOCKER_PLATFORM:
 astunparse:
 - '>=1.6.0,<=1.6.3'
 aws_sdk_cpp:
-- 1.11.833
+- 1.11.905
 black:
 - 26.*
 c_stdlib:
