@@ -1,3 +1,5 @@
+DOCKER_PLATFORM:
+- linux/amd64
 astunparse:
 - '>=1.6.0,<=1.6.3'
 aws_sdk_cpp:
@@ -17,7 +19,7 @@ channel_targets:
 cuda_compiler:
 - cuda-nvcc
 cuda_compiler_version:
-- '13.0'
+- '13.4'
 cxx_compiler:
 - gxx
 cxx_compiler_version:
@@ -59,7 +61,6 @@ pin_run_as_build:
     min_pin: x.x
     max_pin: x.x
 python:
-- 3.10.* *_cpython
 - 3.11.* *_cpython
 - 3.12.* *_cpython
 - 3.13.* *_cp313
