@@ -31,7 +31,7 @@ ffmpeg:
 gast:
 - '>=0.3.3,<=0.7.0'
 libabseil:
-- '20260526'
+- '20260817'
 libboost_headers:
 - '1.92'
 libcst:
